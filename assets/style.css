@@ -179,7 +179,8 @@ p.lead { color: var(--text-dim); }
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 16px;
-  align-items: stretch; /* 同行等高 */
+  /* start：展开演示时只拉高当前卡，不把同行其它卡一起撑高 */
+  align-items: start;
   width: 100%;
 }
 .algo-card {
@@ -195,7 +196,7 @@ p.lead { color: var(--text-dim); }
   width: 100%;
   max-width: 100%;
   min-width: 0;
-  height: 100%;
+  height: auto;
   box-sizing: border-box;
 }
 .algo-card:hover { border-color: rgba(79,195,247,.45); box-shadow: 0 10px 28px rgba(0,0,0,.26); }
