@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>层先法 · 三阶魔方入门教程</title>
+<link rel="stylesheet" href="assets/style.css?v=20260716b">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>CFOP 教程</a>
+    <a class="link" href="index.html">首页</a>
+    <a class="link active" href="lbl.html">层先法</a>
+    <a class="link" href="cross.html">① Cross</a>
+    <a class="link" href="f2l.html">② F2L</a>
+    <a class="link" href="oll.html">③ OLL</a>
+    <a class="link" href="pll.html">④ PLL</a>
+    <a class="link" href="timer.html">⏱ 计时器</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1 class="page-title">层先法 · 入门还原</h1>
+  <p class="lead">
+    层先法（Layer by Layer）是最适合新手的三阶解法：一层一层拼。
+    本页只讲<strong>通用入门手法</strong>，不涉及进阶速拧公式。
+  </p>
+
+  <div class="callout">
+    <strong>约定：</strong> 白底黄顶（白=D，黄=U）。先把白色中心朝下，绿色中心朝自己。
+    记号：<code>R L U D F B</code>，<code>'</code>=逆时针，<code>2</code>=180°。
+    每张卡都有<strong>3D 示意图</strong>（与演示就绪态一致）与 <strong>▶ 演示</strong> 按钮（点开播放转层动画）。
+  </div>
+
+  <!-- 总览 -->
+  <h2 class="section">七步总览</h2>
+  <div class="stage-grid">
+    <div class="stage-card" style="cursor:default">
+      <div class="step">STEP 1</div>
+      <h3>白十字</h3>
+      <p>底面白色十字，侧色对齐中心。</p>
+    </div>
+    <div class="stage-card" style="cursor:default">
+      <div class="step">STEP 2</div>
+      <h3>白色角块</h3>
+      <p>四个白角归位，完成第一层。</p>
+    </div>
+    <div class="stage-card" style="cursor:default">
+      <div class="step">STEP 3</div>
+      <h3>中层棱块</h3>
+      <p>四条中层棱插入正确槽。</p>
+    </div>
+    <div class="stage-card" style="cursor:default">
+      <div class="step">STEP 4</div>
+      <h3>黄十字</h3>
+      <p>顶面做出黄色十字（先不管角）。</p>
+    </div>
+    <div class="stage-card" style="cursor:default">
+      <div class="step">STEP 5</div>
+      <h3>顶面全黄</h3>
+      <p>把四个黄角都翻成朝上。</p>
+    </div>
+    <div class="stage-card" style="cursor:default">
+      <div class="step">STEP 6–7</div>
+      <h3>顶层归位</h3>
+      <p>先角后棱，完成还原。</p>
+    </div>
+  </div>
+
+  <!-- STEP 1 -->
+  <h2 class="section">① 白十字（底面）</h2>
+  <p class="lead">
+    目标：底面四条白棱归位，且侧面颜色与相邻中心一致（绿对绿、红对红…）。
+    按<strong>白棱所在层</strong>分情形：
+  </p>
+  <ul class="lead">
+    <li>优先处理已在底层、只需转底面就能对齐的白棱。</li>
+    <li>顶层白棱：先 <code>U</code> 把侧色对准目标中心列，再下插。</li>
+    <li>中层白棱：先转到顶层，再按顶层情形做。</li>
+    <li>底层方向错 / 位置错：先翻出到顶层，再重新归位。</li>
+  </ul>
+  <div class="algo-grid" id="step1-grid"></div>
+
+  <!-- STEP 2 -->
+  <h2 class="section">② 白色角块（完成第一层）</h2>
+  <p class="lead">
+    把四个带白的角块放到正确底角。标准流程：
+    ① 把目标白角转到「目标槽的正上方」（顶层）；
+    ② 看白色朝哪，选右手法 / 左手法，可重复直到归位。
+  </p>
+  <div class="algo-grid" id="step2-grid"></div>
+
+  <!-- STEP 3 -->
+  <h2 class="section">③ 中层棱块</h2>
+  <p class="lead">
+    第一层完成后，把四条<strong>不含黄</strong>的棱块插入中层。
+    先在顶层找到没有黄色的棱，<code>U</code> 转到与其<strong>侧面色</strong>中心对齐（棱的侧面色朝前），
+    再判断往左插还是往右插。
+    示意图与演示就绪态相同：彩色=关键块，黑色=其它块。
+  </p>
+  <div class="algo-grid" id="step3-grid"></div>
+
+  <!-- STEP 4 -->
+  <h2 class="section">④ 顶面黄十字</h2>
+  <p class="lead">
+    只关心顶面黄色棱是否朝上，先不管角、也不管位置。
+    常见形状：<strong>点 → 折线(L) → 一字 → 十字</strong>。万能公式只有一条，关键是<strong>放对朝向再做</strong>：
+  </p>
+  <div class="algo-grid" id="step4-grid"></div>
+
+  <!-- STEP 5 -->
+  <h2 class="section">⑤ 顶面全黄（角朝向）</h2>
+  <p class="lead">
+    十字做好后，把四个黄角都翻成朝上。入门只记一条「小鱼」公式即可通杀：
+    保持魔方整体朝向不变，只转顶面把<strong>鱼头（唯一朝上的黄角）放在左前</strong>再做；
+    做完再检查，不够就再转 <code>U</code> 找鱼头继续做。
+  </p>
+  <div class="algo-grid" id="step5-grid"></div>
+
+  <!-- STEP 6 -->
+  <h2 class="section">⑥ 顶层角块位置</h2>
+  <p class="lead">
+    顶面已全黄，但角的位置可能不对。先转 <code>U</code> 让尽量多的角归位（侧色对齐中心），再判断：
+  </p>
+  <ul class="lead">
+    <li><strong>4 个都对</strong>：跳过本步。</li>
+    <li><strong>恰好 1 个对</strong>：把正确角放在<strong>左前</strong>，做角交换公式；不对再做一次。</li>
+    <li><strong>0 个对 / 只有对角对</strong>：任意朝向做一遍 → 会出现 1 个正确角，再按上面做。</li>
+  </ul>
+  <div class="algo-grid" id="step6-grid"></div>
+
+  <!-- STEP 7 -->
+  <h2 class="section">⑦ 顶层棱块位置（完成）</h2>
+  <p class="lead">
+    角都对了，只剩顶层四条黄棱可能转错。先转 <code>U</code> 让尽量多的棱归位，再做：
+  </p>
+  <ul class="lead">
+    <li>把<strong>已经对好</strong>的那条棱放在<strong>后面</strong>。</li>
+    <li>做棱交换公式；若方向反了，再做一遍即可。</li>
+    <li>若 0 条对：先随便做一遍，再重新观察。</li>
+  </ul>
+  <div class="algo-grid" id="step7-grid"></div>
+
+  <div class="callout">
+    <strong>恭喜还原！</strong> 层先法熟练后，若想更快，可继续学速拧四步法：
+    <a href="cross.html">Cross</a> ·
+    <a href="f2l.html">F2L</a> ·
+    <a href="oll.html">OLL</a> ·
+    <a href="pll.html">PLL</a>
+  </div>
+</div>
+
+<div class="footer">魔方教程 · 层先法（Layer by Layer）入门</div>
+<script src="assets/cube.js?v=20260715y"></script>
+<script src="assets/cube-anim.js?v=20260715y"></script>
+<script src="assets/ui.js?v=20260715y"></script>
+<script>
+(function () {
+  const Y = CubeViz.CUBE.U; // yellow
+  const W = CubeViz.CUBE.D; // white
+  const G = CubeViz.CUBE.F; // green
+  const R = CubeViz.CUBE.R;
+  const O = CubeViz.CUBE.L;
+  const B = CubeViz.CUBE.B;
+  const X = CubeViz.CUBE.x;
+
+  function card(grid, name, tag, moves, demoOpts, extraTagHtml) {
+    const opts = demoOpts || {};
+    const snap = CubeAnim.renderTeachingSnap(Object.assign({ moves: moves }, opts));
+    const c = document.createElement('div');
+    c.className = 'algo-card';
+    c.innerHTML =
+      `<div class="card-cube-snap">${snap}</div>` +
+      `<div class="name">${name}</div>` +
+      `<div class="tag">${tag || ''}</div>` +
+      (extraTagHtml || '') +
+      `<div class="moves">${CubeViz.fmtMoves(moves)}</div>`;
+    CubeUI.attachCopy(c, moves);
+    CubeUI.attachDemo(c, moves, opts);
+    grid.appendChild(c);
+    return c;
+  }
+
+  function customDemo(startMoves, script, extra) {
+    const tokens = CubeAnim.tokenizeMoves(startMoves);
+    const scriptArr = script || tokens.map((mv, i) => ({
+      move: mv,
+      text: i === tokens.length - 1 ? `执行 ${mv}，完成。` : `执行 ${mv}`
+    }));
+    return Object.assign({
+      start: CubeAnim.fromMoves(startMoves),
+      script: scriptArr,
+      faceFront: false
+    }, extra || {});
+  }
+
+  // ---------- ① 白十字 ----------
+  const g1 = document.getElementById('step1-grid');
+  card(g1, '顶层 · 白朝上', 'U 对准目标列后，直接 180° 下插', 'R2',
+    Object.assign({ cross: true, intro: '彩色=四条白棱。顶层白棱白朝上 → R2 下插。' },
+      customDemo('R2', [{ move: 'R2', text: 'R2 把白棱直接翻到底层正确位置。' }])));
+  card(g1, '顶层 · 白朝侧面', '对准后用「小三步」翻正下插（以右前为例）', "F R' F'",
+    Object.assign({ cross: true, intro: "彩色=四条白棱。顶层白棱白朝侧面 → F R' F'。" },
+      customDemo("F R F'", [
+        { move: 'F', text: 'F 抬起前层。' },
+        { move: "R'", text: "R' 把白棱翻正送入底槽。" },
+        { move: "F'", text: "F' 复位前层。" }
+      ])));
+  card(g1, '中层白棱', '一转即可送回底层（以 F 层为例）', 'F',
+    Object.assign({ cross: true, intro: '彩色=四条白棱。白棱在中层 → F 送回底。' },
+      customDemo("F'", [{ move: 'F', text: '转 F，中层白棱回到底层。' }])));
+  card(g1, '底层错位 / 方向反', '先翻出到顶层，再按顶层情形重做', 'R2 U2 R2',
+    Object.assign({ cross: true, intro: '彩色=四条白棱。底层白棱错位 → 翻出再下插。' },
+      customDemo('R2 U2 R2', [
+        { move: 'R2', text: 'R2 把错误底棱翻到顶层。' },
+        { move: 'U2', text: 'U2 转到正确目标列。' },
+        { move: 'R2', text: 'R2 下插归位。' }
+      ])));
+
+  // ---------- ② 白角 ----------
+  const g2 = document.getElementById('step2-grid');
+  card(g2, '右手法', '角在顶前右 → 插入右前底槽；可重复 1–5 次', "R U R' U'",
+    Object.assign({ maxFocus: 4, intro: '彩色=关键块。右手法把白角插入右前底槽（可重复）。' },
+      customDemo("U R U' R'", [
+        { move: 'R', text: 'R 抬起右层。' },
+        { move: 'U', text: 'U 把角送进槽上方。' },
+        { move: "R'", text: "R' 放下，角进入底槽。" },
+        { move: "U'", text: "U' 复位顶层（若角未对可再做一遍）。" }
+      ])));
+  card(g2, '左手法', '角在顶前左 → 插入左前底槽', "L' U' L U",
+    Object.assign({ maxFocus: 4, intro: '彩色=关键块。左手法把白角插入左前底槽。' },
+      customDemo("U' L' U L", [
+        { move: "L'", text: "L' 抬起左层。" },
+        { move: "U'", text: "U' 把角送进槽上方。" },
+        { move: 'L', text: 'L 放下，角进入底槽。' },
+        { move: 'U', text: 'U 复位顶层。' }
+      ])));
+  card(g2, '白朝前 / 白朝右（仍用右手法）', '白不一定朝上：重复右手法即可「拧正」', "R U R' U'",
+    Object.assign({ maxFocus: 4, intro: '彩色=关键块。重复右手法把白角拧正归位。' },
+      customDemo("U R U' R'", null)),
+    `<div class="note">· 白朝上：做 1 次通常到位<br>· 白朝前或朝右：再做 2–3 次会转到正确朝向</div>`);
+  card(g2, '角已在底层但朝向/位置错', '先用右手法把该角「顶」出到顶层，再按上面重插', "R U R' U'",
+    Object.assign({ maxFocus: 4, intro: '彩色=关键块。右手法把底层错角顶出到顶层。' },
+      customDemo("U R U' R'", null)));
+
+  // ---------- ③ 中层 ----------
+  const midIntro = '彩色=各中心 + 底白棱 + 目标槽底角 + 当前要插/取的中层棱；黑色=其它块。';
+  const g3 = document.getElementById('step3-grid');
+  card(g3, '右插（棱要去前-右）', '顶棱侧面色朝前，目标在右侧', "U R U' R' U' F' U F",
+    { lblMid: true, intro: midIntro + '中层右插：绿朝前，插入右槽（底角绿红白）。' });
+  card(g3, '左插（棱要去前-左）', '顶棱侧面色朝前，目标在左侧', "U' L' U L U F U' F'",
+    { lblMid: true, intro: midIntro + '中层左插：绿朝前，插入左槽（底角绿橙白）。' });
+  card(g3, '中层棱方向错 / 在错误槽', '先对空槽做一次右插或左插，把错误棱「顶」到顶层，再重新插入', "U R U' R' U' F' U F",
+    { lblMid: true, intro: midIntro + '对错误中层槽做一次右插取出（看槽底角认位）。' });
+  card(g3, '顶层只剩黄棱？', '说明中层棱还卡在错误槽里——对任意错误中层槽做一次插入公式取出', "U R U' R' U' F' U F",
+    { lblMid: true, intro: midIntro + '对错误槽做一次插入公式取出卡住的棱。' });
+
+  // ---------- ④ 黄十字 ----------
+  const ycross = "F R U R' U' F'";
+  const ycrossOne = CubeAnim.demoFromAlgo(ycross);
+  const ycrossDot = CubeAnim.demoFromAlgo([ycross, ycross, ycross].join(' '));
+  const ycrossL = CubeAnim.demoFromAlgo([ycross, ycross].join(' '));
+  const g4 = document.getElementById('step4-grid');
+  card(g4, '黄十字公式（万能）', '点 / L / 一字 都用这一条', ycross,
+    {
+      oll: true, faceFront: false,
+      intro: "彩色=顶层黄块。一字 → 十字：F R U R' U' F'。",
+      start: ycrossOne.start, script: ycrossOne.script
+    },
+    `<div class="note">
+      · <strong>点</strong>（只有中心黄）：随便朝向做 1 次 → 变 L<br>
+      · <strong>L 折线</strong>：把 L 放在左后（┐ 形状，两臂朝后+左）再做 → 变一字<br>
+      · <strong>一字</strong>：横条左右横放再做 → 变十字<br>
+      · 已是十字：跳过本步
+    </div>`);
+  card(g4, 'L 放位口诀', '把折线看成「九点钟的指针」——两臂指向后与左', ycross,
+    {
+      oll: true, faceFront: false,
+      intro: '彩色=顶层黄块。L 放好后做一遍 → 变一字。',
+      start: ycrossL.start, script: ycrossOne.script
+    });
+  card(g4, '点 → L（演示）', '顶面只有中心黄，做一遍万能公式变 L', ycross,
+    {
+      oll: true, faceFront: false,
+      intro: "彩色=顶层黄块。点状 → 做一遍 F R U R' U' F' 变 L。",
+      start: ycrossDot.start, script: ycrossOne.script
+    });
+
+  // ---------- ⑤ 顶面全黄 / 小鱼通杀 ----------
+  const sune = "R U R' U R U2 R'";
+  const suneOne = CubeAnim.demoFromAlgo(sune);
+  const suneZero = CubeAnim.demoFromAlgo([sune, sune].join(' '));
+  const suneTwo = CubeAnim.demoFromAlgo([sune, sune, sune].join(' '));
+  const g5 = document.getElementById('step5-grid');
+  card(g5, '小鱼公式', '1 个黄角朝上：鱼头（黄角）放左前，做一遍', sune,
+    {
+      oll: true, faceFront: false,
+      intro: '彩色=顶层黄块。小鱼：鱼头在左前，做一遍把其余黄角翻正。',
+      start: suneOne.start, script: suneOne.script
+    });
+  card(g5, '0 个黄角朝上', '先随便做一遍小鱼 → 会出现 1 个黄角，再按小鱼继续', sune,
+    {
+      oll: true, faceFront: false,
+      intro: '彩色=顶层黄块。0 角朝上时先做一遍小鱼 → 变 1 个鱼头。',
+      start: suneZero.start, script: suneOne.script
+    });
+  card(g5, '2 个黄角朝上', '先做一遍小鱼（任意朝向）→ 变成 1 个或 0 个，再按上面继续', sune,
+    {
+      oll: true, faceFront: false,
+      intro: '彩色=顶层黄块。2 角朝上时先做一遍小鱼。',
+      start: suneTwo.start, script: suneOne.script
+    });
+  card(g5, '3 个黄角朝上？', '不可能。若看到 3 个，说明黄十字还没做好，请回到第 ④ 步', sune,
+    {
+      oll: true, faceFront: false,
+      intro: '彩色=顶层黄块。3 角朝上说明十字未完成。',
+      start: suneOne.start, script: suneOne.script
+    });
+
+  // ---------- ⑥ 顶角位置 ----------
+  const cornerAlg = "U R U' L' U R' U' L";
+  const g6 = document.getElementById('step6-grid');
+  card(g6, '角交换公式', '正确角放左前；循环 / 交换另外的角', cornerAlg,
+    { pll: true, intro: '彩色=顶层块。角交换：正确角放左前。' },
+    `<div class="note">
+      · 做完后检查：若角仍不对，再做 1–2 遍<br>
+      · 0 个正确角时：任意朝向先做一遍，再找正确角
+    </div>`);
+  card(g6, '对角互换时', '两个对角对、另外两个对角也互换：任意朝向做一遍 → 变 1 个正确角', cornerAlg,
+    { pll: true, intro: '彩色=顶层块。对角互换时先做一遍角交换。' });
+
+  // ---------- ⑦ 顶棱位置 ----------
+  const edgeAlg = "F2 U R' L F2 R L' U F2";
+  const g7 = document.getElementById('step7-grid');
+  card(g7, '棱交换公式', '已对好的棱放后面；交换其余三条', edgeAlg,
+    { pll: true, intro: '彩色=顶层块。棱交换：已对好的棱放后面。' },
+    `<div class="note">
+      · 做完若方向反了：再做一遍即可<br>
+      · 0 条对：随便做一遍，再重新观察
+    </div>`);
+  card(g7, '两条相对棱对换', '前后一对 + 左右一对同时错：先做一遍棱交换，再观察', edgeAlg,
+    { pll: true, intro: '彩色=顶层块。两对相对棱对换时，先做一遍棱交换。' });
+})();
+</script>
+</body>
+</html>

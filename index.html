@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>魔方 CFOP 完全教程</title>
+<link rel="stylesheet" href="assets/style.css?v=20260716b">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>CFOP 教程</a>
+    <a class="link active" href="index.html">首页</a>
+    <a class="link" href="lbl.html">层先法</a>
+    <a class="link" href="cross.html">① Cross</a>
+    <a class="link" href="f2l.html">② F2L</a>
+    <a class="link" href="oll.html">③ OLL</a>
+    <a class="link" href="pll.html">④ PLL</a>
+    <a class="link" href="timer.html">⏱ 计时器</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <h1>魔方 <span class="grad">CFOP</span> 完全教程</h1>
+  <p>从入门层先法到 CFOP 速拧：含层先法七步、Cross、F2L 41、OLL 57、PLL 21 与真实魔方演示。</p>
+</div>
+
+<div class="wrap">
+
+  <h2 class="section">什么是 CFOP？</h2>
+  <p class="lead">
+    CFOP 又称 <strong>Fridrich 方法</strong>，是速拧（Speedcubing）中最流行的三阶魔方解法，
+    由 Jessica Fridrich 推广。它把还原过程分为四个阶段，名字正是四阶段首字母：
+  </p>
+
+  <div class="callout">
+    <strong>新手从这里开始：</strong> 还不会还原？先学
+    <a href="lbl.html">层先法（Layer by Layer）</a>——七步完成三阶，公式少、好理解。
+    会还原之后再学下面的 CFOP 提速。
+  </div>
+
+  <div class="stage-grid">
+    <a class="stage-card" href="lbl.html">
+      <div class="step">入门 · LBL</div>
+      <h3>层先法</h3>
+      <p>一层一层拼：白十字 → 白角 → 中层 → 黄十字 → 全黄 → 顶层归位。</p>
+    </a>
+    <a class="stage-card" href="cross.html">
+      <div class="step">STEP 1 · C</div>
+      <h3>Cross 十字</h3>
+      <p>在底面做出一个同色十字，并让四个棱块与相邻中心对齐。</p>
+    </a>
+    <a class="stage-card" href="f2l.html">
+      <div class="step">STEP 2 · F2L</div>
+      <h3>First 2 Layers</h3>
+      <p>一次性拼好底面两层的角块 + 棱块对，共 41 种情形。</p>
+    </a>
+    <a class="stage-card" href="oll.html">
+      <div class="step">STEP 3 · O</div>
+      <h3>OLL 顶面朝向</h3>
+      <p>用 57 个公式让整个顶面变成同一颜色（不管位置）。</p>
+    </a>
+    <a class="stage-card" href="pll.html">
+      <div class="step">STEP 4 · P</div>
+      <h3>PLL 顶层排列</h3>
+      <p>用 21 个公式把顶层所有块归位，完成还原。</p>
+    </a>
+  </div>
+
+  <div class="callout">
+    <strong>学习建议：</strong> 初学者先掌握 Cross 与 F2L 的直觉理解（这两步最影响速度），
+    再逐步背 OLL / PLL。可以先学「两段式 OLL / PLL」过渡，再进阶到整套 57+21 公式。
+  </div>
+
+  <h2 class="section">公式记号（Notation）</h2>
+  <p class="lead">所有公式都用下面这套记号。字母代表转动某一面，<code>'</code>（读作 prime）表示逆时针，<code>2</code> 表示转 180°。</p>
+  <div class="notation-grid">
+    <div class="n-item"><code>R</code><span>右面 顺时针 90°</span></div>
+    <div class="n-item"><code>R'</code><span>右面 逆时针 90°</span></div>
+    <div class="n-item"><code>R2</code><span>右面 180°</span></div>
+    <div class="n-item"><code>L</code><span>左面 顺时针</span></div>
+    <div class="n-item"><code>U</code><span>顶面 顺时针</span></div>
+    <div class="n-item"><code>D</code><span>底面 顺时针</span></div>
+    <div class="n-item"><code>F</code><span>前面 顺时针</span></div>
+    <div class="n-item"><code>B</code><span>后面 顺时针</span></div>
+    <div class="n-item"><code>r / l / u</code><span>双层转（带内层）</span></div>
+    <div class="n-item"><code>M</code><span>中层（跟随 L 方向）</span></div>
+    <div class="n-item"><code>y</code><span>整体绕 U 轴旋转</span></div>
+    <div class="n-item"><code>( )</code><span>括号仅为分组便于记忆</span></div>
+  </div>
+
+  <h2 class="section">如何使用本教程</h2>
+  <p class="lead">
+    按导航栏顺序 ① → ④ 逐步学习。现在 Cross、F2L、OLL、PLL 都带有图形示意：
+    Cross 用目标状态图帮助你理解十字对齐；F2L 用角块/棱块位置图帮助你快速识别情形；
+    OLL 用顶层朝向图展示哪些黄色已经朝上；PLL 用箭头图展示顶层块的移动方向。
+    跟着图对照你手中魔方的状态找到对应公式即可。
+  </p>
+
+</div>
+
+<div class="footer">魔方 CFOP 完全教程 · 纯静态页面，双击任意 .html 即可离线学习</div>
+</body>
+</html>

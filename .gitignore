@@ -1,0 +1,16 @@
+# local / tooling
+.claude/
+.omc/
+tools/
+tmp-*/
+.tmp-*.js
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+Desktop.ini
+.idea/
+.vscode/
+*.swp
+*~

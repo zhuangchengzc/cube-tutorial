@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>④ PLL 顶层排列 · CFOP 教程</title>
+<link rel="stylesheet" href="assets/style.css?v=20260716b">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>CFOP 教程</a>
+    <a class="link" href="index.html">首页</a>
+    <a class="link" href="lbl.html">层先法</a>
+    <a class="link" href="cross.html">① Cross</a>
+    <a class="link" href="f2l.html">② F2L</a>
+    <a class="link" href="oll.html">③ OLL</a>
+    <a class="link active" href="pll.html">④ PLL</a>
+    <a class="link" href="timer.html">⏱ 计时器</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1 class="page-title">④ PLL · 顶层排列</h1>
+  <p class="lead">Permutation of the Last Layer。顶面已全黄，最后一步把顶层所有角块和棱块移动到正确位置，完成还原。共 21 个公式。</p>
+
+  <div class="callout">
+    <strong>看图方法：</strong> 每张卡顶部是<strong>3D 示意图</strong>（与演示就绪态一致）。
+    彩色=顶层全部<strong>角块 + 棱块</strong>（顶面已全黄），中心色=方位参考，黑色=其它块。
+    对照你魔方顶层四周的侧面色带找公式即可。
+    每个公式卡都有 <strong>▶ 演示</strong>：点开即可播放真实转层动画。
+  </div>
+
+  <div class="callout">
+    <strong>初学捷径：</strong> 只想先会还原？记住 <strong>两个公式即可</strong>：
+    一个换角（如 Aa / T），一个换棱（如 Ua / H）。搭配 U 面调整就能应付大多数情况，
+    之后再逐步补齐 21 个 PLL 追求速度。
+  </div>
+
+  <div class="searchbar">
+    <input id="search" type="text" placeholder="搜索公式：输入名称（如 Ua、Jb、Ga）或类型…">
+    <span class="match-count" id="matchCount"></span>
+  </div>
+
+  <div id="pll-groups" class="lead">加载公式数据中…</div>
+
+  <div class="callout">
+    🎉 <strong>PLL 完成，魔方还原！</strong> 反复练习 CFOP 四步，你的速度会稳步提升。
+    进阶方向：Lookahead（预读）、手法优化（fingertricks）、以及 F2L 的直觉化。
+  </div>
+</div>
+
+<div class="footer">魔方 CFOP 完全教程 · PLL（21 公式）</div>
+<script src="assets/cube.js?v=20260716a"></script>
+<script src="assets/cube-anim.js?v=20260716a"></script>
+<script src="assets/ui.js?v=20260716a"></script>
+<script src="data/pll.js"></script>
+<script>
+(function () {
+  const host = document.getElementById('pll-groups');
+  host.innerHTML = '';
+  const groups = {};
+  PLL_ALGS.forEach(a => { (groups[a.group] = groups[a.group] || []).push(a); });
+  Object.keys(groups).forEach(g => {
+    const list = groups[g];
+    const block = document.createElement('div');
+    block.setAttribute('data-group-block', '');
+    const gt = document.createElement('div');
+    gt.className = 'group-title';
+    gt.innerHTML = `<span class="badge">${g}</span><h2>${list[0].groupName}</h2><span class="count">${list.length} 例</span>`;
+    block.appendChild(gt);
+    const grid = document.createElement('div');
+    grid.className = 'algo-grid';
+    list.forEach(a => {
+      const demoOpts = {
+        pll: true,
+        intro: `彩色=顶层全部角块+棱块（目标：顶层排列归位），中心色=方位参考，黑色=其它块。公式：${a.moves}`
+      };
+      const snap = CubeAnim.renderTeachingSnap(Object.assign({ moves: a.moves }, demoOpts));
+      const c = document.createElement('div');
+      c.className = 'algo-card';
+      c.setAttribute('data-search', `pll ${a.name} ${a.desc} ${a.groupName}`);
+      c.innerHTML =
+        `<div class="card-cube-snap">${snap}</div>` +
+        `<div class="name">${a.name}</div>` +
+        `<div class="tag">${a.desc}</div>` +
+        `<div class="moves">${CubeViz.fmtMoves(a.moves)}</div>`;
+      CubeUI.attachCopy(c, a.moves);
+      CubeUI.attachDemo(c, a.moves, demoOpts);
+      grid.appendChild(c);
+    });
+    block.appendChild(grid);
+    host.appendChild(block);
+  });
+  CubeUI.wireSearch(
+    document.getElementById('search'),
+    () => Array.from(document.querySelectorAll('.algo-card')),
+    document.getElementById('matchCount')
+  );
+})();
+</script>
+</body>
+</html>

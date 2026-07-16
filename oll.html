@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>③ OLL 顶面朝向 · CFOP 教程</title>
+<link rel="stylesheet" href="assets/style.css?v=20260716b">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>CFOP 教程</a>
+    <a class="link" href="index.html">首页</a>
+    <a class="link" href="lbl.html">层先法</a>
+    <a class="link" href="cross.html">① Cross</a>
+    <a class="link" href="f2l.html">② F2L</a>
+    <a class="link active" href="oll.html">③ OLL</a>
+    <a class="link" href="pll.html">④ PLL</a>
+    <a class="link" href="timer.html">⏱ 计时器</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1 class="page-title">③ OLL · 顶面朝向</h1>
+  <p class="lead">Orientation of the Last Layer。用公式让顶面变成完全同色（此时不管顶层块的位置，只管朝向）。共 57 个公式。</p>
+
+  <div class="callout">
+    <strong>看图方法：</strong> 每张卡顶部是<strong>3D 示意图</strong>（与演示就绪态一致）。
+    彩色=所有带<strong>黄色</strong>的顶层角/棱，中心色=方位参考，黑色=其它块。
+    对照你魔方顶面黄块形状找公式即可。
+    每个公式卡都有 <strong>▶ 演示</strong>：点开即可播放真实转层动画。
+  </div>
+
+  <div class="callout">
+    <strong>初学捷径：</strong> 记不住 57 个？先学「<strong>两段式 OLL</strong>」——
+    先用一两个公式做出顶面十字（Edge Orientation），再用少量公式定角。之后再补全整套。
+  </div>
+
+  <div class="searchbar">
+    <input id="search" type="text" placeholder="搜索公式：输入编号（如 27）或名称（如 Sune）…">
+    <span class="match-count" id="matchCount"></span>
+  </div>
+
+  <div id="oll-groups" class="lead">加载公式数据中…</div>
+
+  <div class="callout">
+    <strong>下一步 →</strong> 顶面全黄后，进入 <a href="pll.html">④ PLL</a> 完成最后的排列。
+  </div>
+</div>
+
+<div class="footer">魔方 CFOP 完全教程 · OLL（57 公式）</div>
+<script src="assets/cube.js?v=20260716a"></script>
+<script src="assets/cube-anim.js?v=20260716a"></script>
+<script src="assets/ui.js?v=20260716a"></script>
+<script src="data/oll.js"></script>
+<script>
+(function () {
+  const host = document.getElementById('oll-groups');
+  host.innerHTML = '';
+  const groups = {};
+  OLL_ALGS.forEach(a => { (groups[a.group] = groups[a.group] || []).push(a); });
+  Object.keys(groups).forEach(g => {
+    const list = groups[g];
+    const block = document.createElement('div');
+    block.setAttribute('data-group-block', '');
+    const gt = document.createElement('div');
+    gt.className = 'group-title';
+    gt.innerHTML = `<span class="badge">${g}</span><h2>${list[0].groupName}</h2><span class="count">${list.length} 例</span>`;
+    block.appendChild(gt);
+    const grid = document.createElement('div');
+    grid.className = 'algo-grid';
+    list.forEach(a => {
+      const demoOpts = {
+        oll: true,
+        ocll: a.group === 'A',
+        intro: `彩色=所有带黄色的顶层角/棱（目标：顶面全黄），中心色=方位参考，黑色=其它块。公式：${a.moves}`
+      };
+      const snap = CubeAnim.renderTeachingSnap(Object.assign({ moves: a.moves }, demoOpts));
+      const c = document.createElement('div');
+      c.className = 'algo-card';
+      c.setAttribute('data-search', `oll ${a.id} ${a.name} ${a.groupName}`);
+      c.innerHTML =
+        `<div class="card-cube-snap">${snap}</div>` +
+        `<div class="name">OLL ${a.id}</div>` +
+        `<div class="tag">${a.name}</div>` +
+        `<div class="moves">${CubeViz.fmtMoves(a.moves)}</div>`;
+      CubeUI.attachCopy(c, a.moves);
+      CubeUI.attachDemo(c, a.moves, demoOpts);
+      grid.appendChild(c);
+    });
+    block.appendChild(grid);
+    host.appendChild(block);
+  });
+  CubeUI.wireSearch(
+    document.getElementById('search'),
+    () => Array.from(document.querySelectorAll('.algo-card')),
+    document.getElementById('matchCount')
+  );
+})();
+</script>
+</body>
+</html>

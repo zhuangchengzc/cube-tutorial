@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>① Cross 十字 · CFOP 教程</title>
+<link rel="stylesheet" href="assets/style.css?v=20260716b">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>CFOP 教程</a>
+    <a class="link" href="index.html">首页</a>
+    <a class="link" href="lbl.html">层先法</a>
+    <a class="link active" href="cross.html">① Cross</a>
+    <a class="link" href="f2l.html">② F2L</a>
+    <a class="link" href="oll.html">③ OLL</a>
+    <a class="link" href="pll.html">④ PLL</a>
+    <a class="link" href="timer.html">⏱ 计时器</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1 class="page-title">① Cross · 底面十字</h1>
+  <p class="lead">CFOP 的第一步。目标：在底面（通常选白色）做出一个十字，且四条棱块的侧面颜色与相邻中心块一致。</p>
+
+  <h2 class="section">目标状态</h2>
+  <p class="lead">
+    把白色作为底面，先在底面拼出白色十字。关键不只是「底面四个白棱」，
+    还要让每个棱块<strong>侧面的颜色对准对应的中心块</strong>（绿对绿、红对红……），
+    这样才算真正对齐，为后面的 F2L 打好基础。
+  </p>
+
+  <div class="algo-grid cross-goal-grid">
+    <div class="algo-card">
+      <div id="cross-goal" class="cross-goal-face"></div>
+      <div class="name">白色十字目标图</div>
+      <div class="tag">白边在底，四侧分别与中心同色对齐</div>
+    </div>
+    <div class="callout" style="margin:0;">
+      <strong>看图方法：</strong> 这是<strong>底面俯视图</strong>。
+      中心和四条棱是白色，四个角先不用管；图四周的细色条表示相邻侧面的中心颜色：
+      上=蓝，右=红，下=绿，左=橙。真正的 Cross 必须同时满足这四条侧色带也对齐。
+      <br><br>
+      <strong>为什么放在底面？</strong> 把十字做在底面（而不是顶面）是速拧的标准做法。
+      这样接下来做 F2L 时可以直接观察顶层和侧面，手不用频繁翻转魔方，速度更快。
+    </div>
+  </div>
+
+  <h2 class="section">核心思路</h2>
+  <h3>1. 先规划，别急着转</h3>
+  <p class="lead">
+    Cross 是唯一鼓励「盲拧规划」的一步。世界顶尖选手能在观察时间内看完 4 个白棱的位置，
+    用 <strong>不超过 8 步</strong>完成十字。初学时不必追求步数，先做到「不打乱已放好的棱」。
+  </p>
+
+  <h3>2. 从最简单的白棱开始</h3>
+  <p class="lead">
+    每个白棱有两种情况：白色贴纸在侧面 或 在顶/底。逐个把它们送到底面正确位置。
+    优先处理已经在底层、只需转动就能归位的棱块。
+  </p>
+
+  <h3>3. 常见处理手法</h3>
+  <p class="lead">
+    每张卡顶部是<strong>3D 示意图</strong>（与演示就绪态一致，彩色=四条白棱），
+    点 <strong>▶ 演示</strong> 可播放转层动画。
+  </p>
+  <div class="algo-grid" id="cross-cases"></div>
+
+  <h2 class="section">练习目标</h2>
+  <ul class="lead">
+    <li>能在 <strong>不看提示</strong> 的情况下独立完成白十字并对齐中心。</li>
+    <li>逐步减少步数：熟练后目标 <strong>8 步以内</strong>。</li>
+    <li>尝试<strong>底面朝下</strong>盲做十字（进阶），为 F2L 无缝衔接。</li>
+  </ul>
+
+  <div class="callout">
+    <strong>下一步 →</strong> 十字完成后，进入 <a href="f2l.html">② F2L</a>，
+    把底面两层的角块和棱块成对放入。
+  </div>
+</div>
+
+<div class="footer">魔方 CFOP 完全教程 · Cross</div>
+<script src="assets/cube.js?v=20260715z"></script>
+<script src="assets/cube-anim.js?v=20260715z"></script>
+<script src="assets/ui.js?v=20260715z"></script>
+<script>
+(function () {
+  const C = CubeViz.CUBE;
+
+  // 目标：底面俯视图（保留平面图，最直观）
+  document.getElementById('cross-goal').innerHTML = CubeViz.renderFace({
+    size: 112,
+    cells: [C.x, C.D, C.x, C.D, C.D, C.D, C.x, C.D, C.x],
+    top: [null, C.B, null],
+    right: [null, C.R, null],
+    bottom: [null, C.F, null],
+    left: [null, C.L, null]
+  });
+
+  function card(grid, name, tag, moves, demoOpts, extraTagHtml) {
+    const opts = demoOpts || {};
+    const snap = CubeAnim.renderTeachingSnap(Object.assign({ moves: moves }, opts));
+    const el = document.createElement('div');
+    el.className = 'algo-card';
+    el.innerHTML =
+      `<div class="card-cube-snap">${snap}</div>` +
+      `<div class="name">${name}</div>` +
+      `<div class="tag">${tag || ''}</div>` +
+      (extraTagHtml || '') +
+      `<div class="moves">${CubeViz.fmtMoves(moves)}</div>`;
+    CubeUI.attachCopy(el, moves);
+    CubeUI.attachDemo(el, moves, opts);
+    grid.appendChild(el);
+    return el;
+  }
+
+  function customDemo(startMoves, script, extra) {
+    const tokens = CubeAnim.tokenizeMoves(startMoves);
+    const scriptArr = script || tokens.map((mv, i) => ({
+      move: mv,
+      text: i === tokens.length - 1 ? `执行 ${mv}，完成。` : `执行 ${mv}`
+    }));
+    return Object.assign({
+      start: CubeAnim.fromMoves(startMoves),
+      script: scriptArr,
+      faceFront: false
+    }, extra || {});
+  }
+
+  const intro = '彩色=四条白棱（目标：底面白十字 + 侧色对齐），中心色=方位参考，黑色=其它块。';
+  const grid = document.getElementById('cross-cases');
+
+  // 与层先法 step1 / 原 cross 演示一致
+  card(grid, '顶层 · 白朝侧面', '对准后用「小三步」翻正下插（以右前为例）', "F R' F'",
+    Object.assign({ cross: true, intro: intro + '白棱在顶层且白色朝侧面 → F R\' F\'。' },
+      customDemo("F R F'", [
+        { move: 'F', text: 'F 抬起前层，把顶层白棱带进右层。' },
+        { move: "R'", text: "R' 把白棱翻正送入底槽。" },
+        { move: "F'", text: "F' 复位前层，侧色也对齐。" }
+      ])));
+
+  card(grid, '顶层 · 白朝上', 'U 对准目标列后，直接 180° 下插', 'R2',
+    Object.assign({ cross: true, intro: intro + '白棱在顶层且白色朝上 → R2 下插。' },
+      customDemo('R2', [
+        { move: 'R2', text: 'R2 把白色朝上的顶层白棱直接翻到底层并归位。' }
+      ])));
+
+  card(grid, '中层白棱', '一转即可送回底层（以 F 层为例）', 'F',
+    Object.assign({ cross: true, intro: intro + '白棱卡在中层 → F 送回底。' },
+      customDemo("F'", [
+        { move: 'F', text: '转 F，把中层白棱直接带回底层正确位置。' }
+      ])));
+
+  card(grid, '底层错位 / 未对准', '先翻出到顶层，对准后再下插', 'R2 U2 R2',
+    Object.assign({ cross: true, intro: intro + '底层白棱错位或顶层未对准 → 翻出、对准、下插。' },
+      customDemo('R2 U2 R2', [
+        { move: 'R2', text: 'R2 把该白棱翻到顶层（便于观察）。' },
+        { move: 'U2', text: 'U2 转到目标列正上方。' },
+        { move: 'R2', text: '再 R2 下插，十字完成。' }
+      ])));
+})();
+</script>
+</body>
+</html>

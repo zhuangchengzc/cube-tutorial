@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⏱ 计时器 · CFOP 教程</title>
+<link rel="stylesheet" href="assets/style.css?v=20260716b">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>CFOP 教程</a>
+    <a class="link" href="index.html">首页</a>
+    <a class="link" href="lbl.html">层先法</a>
+    <a class="link" href="cross.html">① Cross</a>
+    <a class="link" href="f2l.html">② F2L</a>
+    <a class="link" href="oll.html">③ OLL</a>
+    <a class="link" href="pll.html">④ PLL</a>
+    <a class="link active" href="timer.html">⏱ 计时器</a>
+  </div>
+</nav>
+
+<div class="wrap timer-page">
+  <h1 class="page-title">⏱ 速拧计时器</h1>
+
+  <!-- 使用说明：折叠可开 -->
+  <details class="timer-help" open>
+    <summary>怎么用？（点此收起/展开）</summary>
+    <ol class="timer-steps">
+      <li><strong>看打乱</strong>：按上方公式把魔方打乱。</li>
+      <li><strong>按住空格</strong>（手机：按住大数字区域）约 0.3 秒，数字变<strong class="c-ready">绿色</strong>。</li>
+      <li><strong>松开</strong> → 开始计时，立刻开始拧。</li>
+      <li><strong>拧完</strong>后按<strong>任意键</strong>或<strong>点一下大数字</strong>停止，成绩自动保存。</li>
+    </ol>
+    <p class="timer-tip">
+      提示：变绿前就松开 = 还没就绪，不会开始。
+      快捷键：<kbd>空格</kbd> 计时 · <kbd>Esc</kbd> 取消按住 · <kbd>Backspace</kbd> 删最近一条 · <kbd>N</kbd> 换打乱
+    </p>
+  </details>
+
+  <div class="timer-box">
+    <!-- 打乱 -->
+    <div class="scramble-wrap">
+      <div class="scramble-label">本次打乱 · 20 步</div>
+      <div class="scramble" id="scramble" aria-live="polite">生成打乱中…</div>
+      <button type="button" class="btn scramble-btn" id="newScramble" title="快捷键 N">换一个打乱</button>
+    </div>
+
+    <!-- 大触控计时区 -->
+    <div class="timer-pad" id="timerPad" tabindex="0" role="button"
+         aria-label="计时区域：按住准备，松开开始，再点停止">
+      <div class="timer-state" id="stateChip">待命</div>
+      <div class="timer-display" id="display">0.00</div>
+      <div class="hold-bar" id="holdBar" aria-hidden="true"><span></span></div>
+      <div class="timer-hint" id="hint">按住空格（或本区域）准备</div>
+    </div>
+
+    <div class="timer-actions">
+      <button type="button" class="btn" id="penalty2" title="最近一条 +2 秒">+2</button>
+      <button type="button" class="btn" id="penaltyDnf" title="最近一条记为 DNF">DNF</button>
+      <button type="button" class="btn" id="deleteLast" title="快捷键 Backspace">删最近</button>
+      <button type="button" class="btn danger" id="clearAll">清空成绩</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-tile"><div class="label">次数</div><div class="value" id="stCount">0</div></div>
+      <div class="stat-tile"><div class="label">最佳</div><div class="value" id="stBest">—</div></div>
+      <div class="stat-tile"><div class="label">ao5</div><div class="value" id="stAo5">—</div></div>
+      <div class="stat-tile"><div class="label">ao12</div><div class="value" id="stAo12">—</div></div>
+      <div class="stat-tile"><div class="label">会话均</div><div class="value" id="stMean">—</div></div>
+    </div>
+  </div>
+
+  <div class="times-list">
+    <div class="times-head">
+      <h2 class="section" style="margin:0">成绩列表</h2>
+      <span class="times-note">本地保存，刷新不丢</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width:52px">#</th>
+          <th style="width:100px">成绩</th>
+          <th>打乱</th>
+          <th style="width:70px"></th>
+        </tr>
+      </thead>
+      <tbody id="timesBody">
+        <tr><td colspan="4" class="empty">还没有成绩，按住空格开始第一次吧！</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="footer">魔方 CFOP 完全教程 · 计时器</div>
+<script>
+(function () {
+  const FACES = ['U', 'D', 'L', 'R', 'F', 'B'];
+  const AXIS = { U: 'y', D: 'y', L: 'x', R: 'x', F: 'z', B: 'z' };
+  const SUFFIX = ['', "'", '2'];
+  const HOLD_MS = 320;
+  const STORAGE_KEY = 'cfop_times_v2';
+
+  // 官方风格：相邻不同轴（同轴对面会合并成一步，直接禁止）
+  function genScramble(len) {
+    const seq = [];
+    let lastAxis = '';
+    let lastFace = '';
+    for (let i = 0; i < len; i++) {
+      let f;
+      do {
+        f = FACES[Math.floor(Math.random() * 6)];
+      } while (AXIS[f] === lastAxis);
+      lastAxis = AXIS[f];
+      lastFace = f;
+      seq.push(f + SUFFIX[Math.floor(Math.random() * 3)]);
+    }
+    return seq.join(' ');
+  }
+
+  const $ = id => document.getElementById(id);
+  const display = $('display');
+  const hint = $('hint');
+  const scrambleEl = $('scramble');
+  const pad = $('timerPad');
+  const stateChip = $('stateChip');
+  const holdBar = $('holdBar');
+
+  // 成绩：{ ms, scr, pen: 0 | 2000 | 'dnf', at }
+  let times = [];
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('cfop_times');
+    times = JSON.parse(raw || '[]').map(t => ({
+      ms: t.ms,
+      scr: t.scr || '',
+      pen: t.pen || 0,
+      at: t.at || Date.now()
+    }));
+  } catch (e) { times = []; }
+
+  function save() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(times)); } catch (e) {}
+  }
+
+  function effectiveMs(t) {
+    if (!t || t.pen === 'dnf') return null;
+    return t.ms + (typeof t.pen === 'number' ? t.pen : 0);
+  }
+
+  function fmt(ms) {
+    if (ms == null || !isFinite(ms)) return '—';
+    const s = ms / 1000;
+    if (s < 60) return s.toFixed(2);
+    const m = Math.floor(s / 60);
+    const rem = s - m * 60;
+    return m + ':' + rem.toFixed(2).padStart(5, '0');
+  }
+
+  function fmtResult(t) {
+    if (!t) return '—';
+    if (t.pen === 'dnf') return 'DNF';
+    const base = fmt(t.ms);
+    if (t.pen === 2000) return base + '+';
+    return base;
+  }
+
+  // WCA average of N：去掉 1 最好 + 1 最差；DNF 计为无穷；≥2 个 DNF → DNF
+  function averageOf(list) {
+    if (!list || list.length < 3) return null;
+    const vals = list.map(effectiveMs);
+    const dnfs = vals.filter(v => v == null).length;
+    if (dnfs >= 2) return Infinity;
+    const nums = vals.map(v => v == null ? Infinity : v).sort((a, b) => a - b);
+    const trimmed = nums.slice(1, nums.length - 1);
+    if (trimmed.some(v => !isFinite(v))) return Infinity;
+    return trimmed.reduce((a, b) => a + b, 0) / trimmed.length;
+  }
+
+  function lastN(n) {
+    if (times.length < n) return null;
+    return averageOf(times.slice(-n));
+  }
+
+  function fmtAvg(v) {
+    if (v == null) return '—';
+    if (!isFinite(v)) return 'DNF';
+    return fmt(v);
+  }
+
+  function setStateUI(s, msg) {
+    pad.classList.remove('is-idle', 'is-holding', 'is-ready', 'is-running');
+    pad.classList.add('is-' + s);
+    display.className = 'timer-display' + (s === 'holding' || s === 'ready' || s === 'running' ? ' ' + s : '');
+    const labels = { idle: '待命', holding: '按住中…', ready: '就绪', running: '计时中' };
+    stateChip.textContent = labels[s] || s;
+    if (msg) hint.textContent = msg;
+  }
+
+  function renderStats() {
+    $('stCount').textContent = times.length;
+    const valids = times.map(effectiveMs).filter(v => v != null);
+    $('stBest').textContent = valids.length ? fmt(Math.min(...valids)) : '—';
+    $('stAo5').textContent = fmtAvg(lastN(5));
+    $('stAo12').textContent = fmtAvg(lastN(12));
+    $('stMean').textContent = valids.length
+      ? fmt(valids.reduce((a, b) => a + b, 0) / valids.length)
+      : '—';
+  }
+
+  function renderList() {
+    const body = $('timesBody');
+    if (!times.length) {
+      body.innerHTML = '<tr><td colspan="4" class="empty">还没有成绩，按住空格开始第一次吧！</td></tr>';
+      return;
+    }
+    const valids = times.map(effectiveMs).filter(v => v != null);
+    const best = valids.length ? Math.min(...valids) : null;
+    body.innerHTML = times.map((t, i) => {
+      const eff = effectiveMs(t);
+      const isBest = best != null && eff === best;
+      return `<tr class="${isBest ? 'best' : ''} ${t.pen === 'dnf' ? 'dnf' : ''}" data-i="${i}">
+        <td>${i + 1}</td>
+        <td class="time">${fmtResult(t)}</td>
+        <td class="scr">${t.scr || ''}</td>
+        <td class="ops">
+          <button type="button" class="linkish pen2" data-i="${i}" title="+2">+2</button>
+          <button type="button" class="linkish del" data-i="${i}" title="删除">删</button>
+        </td>
+      </tr>`;
+    }).reverse().join('');
+  }
+
+  let curScramble = '';
+  function newScramble() {
+    curScramble = genScramble(20);
+    scrambleEl.textContent = curScramble;
+  }
+
+  // ---- 状态机：idle → holding → ready → running → idle ----
+  let state = 'idle';
+  let startTime = 0;
+  let rafId = 0;
+  let holdTimer = 0;
+  let holdStart = 0;
+  let holdRaf = 0;
+  let ignoreNextKeyup = false;
+
+  function tick() {
+    display.textContent = fmt(performance.now() - startTime);
+    rafId = requestAnimationFrame(tick);
+  }
+
+  function startHoldBar() {
+    holdStart = performance.now();
+    holdBar.classList.add('show');
+    const span = holdBar.firstElementChild;
+    function step() {
+      if (state !== 'holding') return;
+      const p = Math.min(1, (performance.now() - holdStart) / HOLD_MS);
+      span.style.width = (p * 100) + '%';
+      holdRaf = requestAnimationFrame(step);
+    }
+    span.style.width = '0%';
+    holdRaf = requestAnimationFrame(step);
+  }
+
+  function stopHoldBar() {
+    cancelAnimationFrame(holdRaf);
+    holdBar.classList.remove('show');
+    holdBar.firstElementChild.style.width = '0%';
+  }
+
+  function startRun() {
+    state = 'running';
+    stopHoldBar();
+    setStateUI('running', '拧完后：按任意键 / 再点一下这里停止');
+    startTime = performance.now();
+    tick();
+  }
+
+  function stopRun() {
+    cancelAnimationFrame(rafId);
+    const ms = Math.round(performance.now() - startTime);
+    display.textContent = fmt(ms);
+    times.push({ ms, scr: curScramble, pen: 0, at: Date.now() });
+    save();
+    renderList();
+    renderStats();
+    state = 'idle';
+    setStateUI('idle', '已记录 ' + fmt(ms) + ' · 按住空格开始下一次');
+    newScramble();
+    // 防止空格停止后立刻又触发 keyup 开始按住
+    ignoreNextKeyup = true;
+    setTimeout(() => { ignoreNextKeyup = false; }, 80);
+  }
+
+  function beginHold() {
+    if (state !== 'idle') return;
+    state = 'holding';
+    setStateUI('holding', '继续按住… 变绿后再松开');
+    startHoldBar();
+    holdTimer = setTimeout(() => {
+      if (state === 'holding') {
+        state = 'ready';
+        stopHoldBar();
+        display.textContent = '0.00';
+        setStateUI('ready', '松开即可开始！');
+      }
+    }, HOLD_MS);
+  }
+
+  function releaseHold() {
+    clearTimeout(holdTimer);
+    stopHoldBar();
+    if (state === 'ready') {
+      startRun();
+    } else if (state === 'holding') {
+      state = 'idle';
+      setStateUI('idle', '按住时间太短，再多按一会儿到变绿');
+    }
+  }
+
+  function cancelHold() {
+    clearTimeout(holdTimer);
+    stopHoldBar();
+    if (state === 'holding' || state === 'ready') {
+      state = 'idle';
+      setStateUI('idle', '已取消 · 按住空格准备');
+    }
+  }
+
+  function deleteLast() {
+    if (!times.length || state === 'running') return;
+    times.pop();
+    save();
+    renderList();
+    renderStats();
+    setStateUI('idle', '已删除最近一条');
+  }
+
+  function applyPenalty(pen) {
+    if (!times.length || state === 'running') return;
+    const t = times[times.length - 1];
+    // 再点一次同一惩罚 → 取消
+    if (t.pen === pen) t.pen = 0;
+    else t.pen = pen;
+    save();
+    renderList();
+    renderStats();
+    setStateUI('idle', '最近成绩：' + fmtResult(t));
+  }
+
+  // 键盘
+  document.addEventListener('keydown', e => {
+    const tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SUMMARY') return;
+
+    if (e.code === 'Escape') {
+      e.preventDefault();
+      cancelHold();
+      return;
+    }
+    if (e.code === 'Backspace' && state === 'idle') {
+      e.preventDefault();
+      deleteLast();
+      return;
+    }
+    if ((e.key === 'n' || e.key === 'N') && state === 'idle' && !e.ctrlKey && !e.metaKey) {
+      e.preventDefault();
+      newScramble();
+      return;
+    }
+
+    if (e.code === 'Space') {
+      e.preventDefault();
+      if (state === 'running') { stopRun(); return; }
+      if (!e.repeat) beginHold();
+      return;
+    }
+
+    // 运行中任意键停止（除修饰键）
+    if (state === 'running' && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault();
+      stopRun();
+    }
+  });
+
+  document.addEventListener('keyup', e => {
+    if (e.code !== 'Space') return;
+    e.preventDefault();
+    if (ignoreNextKeyup) return;
+    releaseHold();
+  });
+
+  // 触控 / 鼠标：整个 pad
+  let pointerHolding = false;
+  pad.addEventListener('pointerdown', e => {
+    // 忽略右键
+    if (e.button != null && e.button !== 0) return;
+    e.preventDefault();
+    pad.setPointerCapture && pad.setPointerCapture(e.pointerId);
+    if (state === 'running') { stopRun(); return; }
+    pointerHolding = true;
+    beginHold();
+  });
+  function endPointer(e) {
+    if (!pointerHolding) return;
+    pointerHolding = false;
+    e && e.preventDefault();
+    if (state !== 'running') releaseHold();
+  }
+  pad.addEventListener('pointerup', endPointer);
+  pad.addEventListener('pointercancel', () => {
+    pointerHolding = false;
+    cancelHold();
+  });
+  pad.addEventListener('pointerleave', e => {
+    // 鼠标拖出区域时取消（触摸一般有 capture）
+    if (e.pointerType === 'mouse' && pointerHolding) {
+      pointerHolding = false;
+      cancelHold();
+    }
+  });
+
+  // 防止长按弹出菜单
+  pad.addEventListener('contextmenu', e => e.preventDefault());
+
+  // 列表事件委托
+  $('timesBody').addEventListener('click', e => {
+    const del = e.target.closest('.del');
+    const pen2 = e.target.closest('.pen2');
+    if (del) {
+      const i = parseInt(del.dataset.i, 10);
+      if (!isNaN(i)) {
+        times.splice(i, 1);
+        save(); renderList(); renderStats();
+      }
+    } else if (pen2) {
+      const i = parseInt(pen2.dataset.i, 10);
+      const t = times[i];
+      if (!t) return;
+      // 切换 +2；若当前是 DNF 则改为 +2
+      t.pen = (t.pen === 2000) ? 0 : 2000;
+      save(); renderList(); renderStats();
+    }
+  });
+
+  $('newScramble').addEventListener('click', () => {
+    if (state === 'running') return;
+    newScramble();
+  });
+  $('deleteLast').addEventListener('click', deleteLast);
+  $('penalty2').addEventListener('click', () => applyPenalty(2000));
+  $('penaltyDnf').addEventListener('click', () => applyPenalty('dnf'));
+  $('clearAll').addEventListener('click', () => {
+    if (state === 'running') return;
+    if (confirm('确定清空本会话全部成绩？此操作不可恢复。')) {
+      times = [];
+      save();
+      renderList();
+      renderStats();
+      setStateUI('idle', '成绩已清空');
+    }
+  });
+
+  // 首次进入：收起帮助（若已有成绩）
+  if (times.length >= 3) {
+    const help = document.querySelector('.timer-help');
+    if (help) help.open = false;
+  }
+
+  newScramble();
+  renderList();
+  renderStats();
+  setStateUI('idle', '按住空格（或下方大区域）准备 · 变绿后松开开始');
+})();
+</script>
+</body>
+</html>

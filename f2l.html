@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>② F2L 前两层 · CFOP 教程</title>
+<link rel="stylesheet" href="assets/style.css?v=20260716b">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="index.html"><span class="dot"></span>CFOP 教程</a>
+    <a class="link" href="index.html">首页</a>
+    <a class="link" href="lbl.html">层先法</a>
+    <a class="link" href="cross.html">① Cross</a>
+    <a class="link active" href="f2l.html">② F2L</a>
+    <a class="link" href="oll.html">③ OLL</a>
+    <a class="link" href="pll.html">④ PLL</a>
+    <a class="link" href="timer.html">⏱ 计时器</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1 class="page-title">② F2L · 前两层</h1>
+  <p class="lead">First 2 Layers。把底面两层一次性拼好——每次处理一个「角块 + 棱块」配对（slot），共 4 个槽。</p>
+
+  <div class="callout">
+    <strong>核心理念：</strong> F2L 不背公式也能做！它的本质是把一个角块和它对应的棱块「配成一对」，
+    再一起插入到对应的槽里。下面的 41 个公式是<strong>最优解</strong>，熟练后能显著提速，
+    但初学者应先理解「配对 → 插入」的直觉。
+  </div>
+
+  <h2 class="section">四个槽（Slot）</h2>
+  <p class="lead">
+    Cross 完成后，底层四个角落各有一个空槽，需要填入对应的「角+棱」对。
+    每个待处理的块都在顶层游走，你要把角块和棱块调到相邻，再一并送下去。
+  </p>
+
+  <h2 class="section">基本情形</h2>
+  <p class="lead">记号约定：目标槽位于<strong>前-右（FR）</strong>。<code>R U R'</code> 是最基础的插入动作。</p>
+
+  <div class="callout">
+    <strong>看图方法：</strong> 每张卡顶部是<strong>3D 示意图</strong>（与演示就绪态一致）。
+    彩色=本公式要处理的<strong>角块 + 棱块</strong>，中心色=方位参考，黑色=其它块。
+    对照你魔方上这对块的位置找情形即可。
+    每个公式卡都有 <strong>▶ 演示</strong>：点开即可播放真实转层动画。
+  </div>
+
+  <div class="searchbar">
+    <input id="search" type="text" placeholder="搜索：输入编号（如 1）或名称关键词…">
+    <span class="match-count" id="matchCount"></span>
+  </div>
+
+  <div id="f2l-groups"></div>
+
+  <div class="callout">
+    <strong>训练建议：</strong> 先练「角朝上 + 棱在顶」的 4 个基础对（编号 1–4），
+    它们是所有情形的基石。之后再逐渐把其余情形对应到基础动作上。
+    真正比赛中 F2L 讲究「一眼看出配对」而非死记公式号。
+  </div>
+
+  <div class="callout">
+    <strong>下一步 →</strong> 前两层完成后，进入 <a href="oll.html">③ OLL</a> 处理顶面朝向。
+  </div>
+</div>
+
+<div class="footer">魔方 CFOP 完全教程 · F2L（41 标准公式）</div>
+<script src="assets/cube.js?v=20260716a"></script>
+<script src="assets/cube-anim.js?v=20260716a"></script>
+<script src="assets/ui.js?v=20260716a"></script>
+<script src="data/f2l.js"></script>
+<script>
+(function () {
+  const host = document.getElementById('f2l-groups');
+  const groups = {};
+  F2L_ALGS.forEach(a => { (groups[a.group] = groups[a.group] || []).push(a); });
+  Object.keys(groups).forEach(g => {
+    const list = groups[g];
+    const block = document.createElement('div');
+    block.setAttribute('data-group-block', '');
+    const gt = document.createElement('div');
+    gt.className = 'group-title';
+    gt.innerHTML = `<span class="badge">${g}</span><h2>${list[0].groupName}</h2><span class="count">${list.length} 例</span>`;
+    block.appendChild(gt);
+    const grid = document.createElement('div');
+    grid.className = 'algo-grid';
+    list.forEach(a => {
+      const demoOpts = {
+        f2l: true,
+        intro: `彩色=本公式的角块+棱块（优先前右 FR 对），中心色=方位参考，黑色=其它块。公式：${a.moves}`
+      };
+      const snap = CubeAnim.renderTeachingSnap(Object.assign({ moves: a.moves }, demoOpts));
+      const c = document.createElement('div');
+      c.className = 'algo-card';
+      c.setAttribute('data-search', `f2l ${a.id} ${a.name} ${a.desc} ${a.groupName}`);
+      c.innerHTML =
+        `<div class="card-cube-snap">${snap}</div>` +
+        `<div class="name">#${a.id} ${a.name}</div>` +
+        `<div class="tag">${a.desc || ''}</div>` +
+        `<div class="moves">${CubeViz.fmtMoves(a.moves)}</div>`;
+      CubeUI.attachCopy(c, a.moves);
+      CubeUI.attachDemo(c, a.moves, demoOpts);
+      grid.appendChild(c);
+    });
+    block.appendChild(grid);
+    host.appendChild(block);
+  });
+  CubeUI.wireSearch(
+    document.getElementById('search'),
+    () => Array.from(document.querySelectorAll('.algo-card')),
+    document.getElementById('matchCount')
+  );
+})();
+</script>
+</body>
+</html>
