@@ -53,8 +53,9 @@ const F2L_ALGS = [
     viz:{ corner:{pos:8,color:_U}, slotFilled:true } },
 
   // ===== F 角棱皆在顶（分离） =====
-  { id:21, group:"F", groupName:"角棱皆在顶（分离）", name:"角在右后，棱在左", desc:"", moves:"U R U2 R' U R' U' R",
-    viz:{ edge:{pos:1,color:_F}, slotFilled:true } },
+  // 旧式 "U R U2 R' U R' U' R" 逆推会同时打乱 FR+BR，演示高亮错对；改为纯 FR 单对公式
+  { id:21, group:"F", groupName:"角棱皆在顶（分离）", name:"角在右后（白朝上），棱在顶后", desc:"", moves:"U R U2 R' U' R U R'",
+    viz:{ corner:{pos:2,color:_U}, edge:{pos:1,color:_F} } },
   { id:22, group:"F", groupName:"角棱皆在顶（分离）", name:"角在右后，棱在前", desc:"", moves:"U2 R U R' U R U' R'",
     viz:{ corner:{pos:8,color:_U}, edge:{pos:3,color:_F} } },
   { id:23, group:"F", groupName:"角棱皆在顶（分离）", name:"角白朝上，棱远离", desc:"", moves:"U R' U' R U R' U' R",

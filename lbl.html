@@ -259,7 +259,12 @@
   // ---------- ④ 黄十字 ----------
   const ycross = "F R U R' U' F'";
   const ycrossOne = CubeAnim.demoFromAlgo(ycross);
-  const ycrossDot = CubeAnim.demoFromAlgo([ycross, ycross, ycross].join(' '));
+  // 真·点状：不能用「公式×3 的逆」——那会变成 EO=4 的十字错位。
+  // 正确构造：一字（公式逆）→ 错 AUF（U）→ 再做一遍公式 → 0 条黄棱朝上。
+  const ycrossDotStart = CubeAnim.fromMoves(
+    CubeAnim.reverseMoves(ycross).concat(['U']).concat(CubeAnim.tokenizeMoves(ycross)).join(' ')
+  );
+  // L 折线（两臂朝后+左 = UB+UL）：公式做两遍的逆
   const ycrossL = CubeAnim.demoFromAlgo([ycross, ycross].join(' '));
   const g4 = document.getElementById('step4-grid');
   card(g4, '黄十字公式（万能）', '点 / L / 一字 都用这一条', ycross,
@@ -284,7 +289,7 @@
     {
       oll: true, faceFront: false,
       intro: "彩色=顶层黄块。点状 → 做一遍 F R U R' U' F' 变 L。",
-      start: ycrossDot.start, script: ycrossOne.script
+      start: ycrossDotStart, script: ycrossOne.script
     });
 
   // ---------- ⑤ 顶面全黄 / 小鱼通杀 ----------
@@ -319,12 +324,14 @@
     });
 
   // ---------- ⑥ 顶角位置 ----------
-  const cornerAlg = "U R U' L' U R' U' L";
+  // 保向三角循环：固定左前角（UFL），循环另外三个；顶面保持全黄。
+  // 旧式 Niklas「U R U' L' U R' U' L」会拧角，做完顶面不再全黄，不适合本步。
+  const cornerAlg = "R' F R' B2 R F' R' B2 R2";
   const g6 = document.getElementById('step6-grid');
   card(g6, '角交换公式', '正确角放左前；循环 / 交换另外的角', cornerAlg,
-    { pll: true, intro: '彩色=顶层块。角交换：正确角放左前。' },
+    { pll: true, intro: '彩色=顶层块。角交换：正确角放左前，顶面保持全黄。' },
     `<div class="note">
-      · 做完后检查：若角仍不对，再做 1–2 遍<br>
+      · 做完后检查：若角仍不对，再做 1–2 遍（公式阶为 3）<br>
       · 0 个正确角时：任意朝向先做一遍，再找正确角
     </div>`);
   card(g6, '对角互换时', '两个对角对、另外两个对角也互换：任意朝向做一遍 → 变 1 个正确角', cornerAlg,
