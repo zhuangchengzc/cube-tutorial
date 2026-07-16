@@ -1,6 +1,6 @@
 # 魔方 CFOP 完全教程
 
-纯静态三阶魔方教程站：从入门**层先法**到速拧 **CFOP**（Cross / F2L / OLL / PLL），带 3D 教学示意图、分步演示动画和 WCA 风格计时器。
+纯静态三阶魔方教程站：从入门**层先法**到速拧 **CFOP**（Cross / F2L / OLL / PLL）与**进阶提速**，带 3D 教学示意图、分步演示动画和 WCA 风格计时器。
 
 **在线预览：** [https://zhuangchengzc.github.io/cube-tutorial/](https://zhuangchengzc.github.io/cube-tutorial/)
 
@@ -14,6 +14,7 @@
 | [f2l.html](f2l.html) | ② F2L 前两层（41 公式） |
 | [oll.html](oll.html) | ③ OLL 顶面朝向（57 公式） |
 | [pll.html](pll.html) | ④ PLL 顶层排列（21 公式） |
+| [advanced.html](advanced.html) | 进阶提速（Lookahead / 练习菜单） |
 | [timer.html](timer.html) | 速拧计时器（打乱 + ao5/ao12） |
 
 ### 交互说明
@@ -52,6 +53,7 @@ python -m http.server 8080
 ├── f2l.html            # F2L
 ├── oll.html            # OLL
 ├── pll.html            # PLL
+├── advanced.html       # 进阶提速
 ├── timer.html          # 计时器
 ├── assets/
 │   ├── style.css       # 全站样式
