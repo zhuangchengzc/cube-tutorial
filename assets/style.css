@@ -521,13 +521,12 @@ p.lead { color: var(--text-dim); }
 .cube-sticker-3d { stroke: rgba(8,10,14,.9); stroke-width: 1.8; }
 .cube-sticker-3d.focus { stroke: rgba(255,255,255,.22); stroke-width: 1.6; }
 .cube-sticker-3d.dim { stroke: rgba(255,255,255,.05); stroke-width: 1.2; opacity: .92; }
-/* 仅关键角/棱的背面贴纸：虚线描边；中心与黑块不透视 */
+/* 仅关键角/棱的背面贴纸：略透明实色，无虚线；中心与黑块不透视 */
 .cube-sticker-3d.focus.xray {
-  opacity: .92;
-  stroke: rgba(255,255,255,.6);
-  stroke-width: 1.6;
-  stroke-dasharray: 3.5 2.5;
-  filter: drop-shadow(0 0 3px rgba(255,255,255,.1));
+  opacity: .72;
+  stroke: rgba(0,0,0,.35);
+  stroke-width: 1.4;
+  filter: brightness(0.92);
 }
 .cube-sticker-3d.hl { stroke: rgba(255,202,40,.95); stroke-width: 2.4; filter: drop-shadow(0 0 6px rgba(255,202,40,.28)); }
 .cube-sticker-gloss { fill: rgba(255,255,255,.14); pointer-events: none; }

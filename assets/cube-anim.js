@@ -1088,7 +1088,7 @@
    * 刚体转层渲染：
    * 1) 静止姿态生成每个贴纸四角
    * 2) 属于转层的贴纸：四个角点 + 法线 一起绕魔方中心旋转
-   * 3) teaching：关键角/棱上色；其背向贴纸虚线画出；中心与黑块不透视
+   * 3) teaching：关键角/棱上色；其背向贴纸略透明实色画出；中心与黑块不透视
    */
   function renderCube(faces, opts) {
     opts = opts || {};
@@ -1212,7 +1212,7 @@
       let fill;
       let cls = 'cube-sticker-3d';
       if (q.kind === 'xray') {
-        // 背面关键色：略压暗 + 虚线描边，表示「在背面」
+        // 背面关键色：略透明实色（无虚线），表示「在背面」
         fill = shadeByNormal(q.color, q.normal);
         cls += ' focus xray';
       } else if (q.kind === 'dim' || isBlack) {
