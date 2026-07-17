@@ -1088,7 +1088,8 @@
    * 刚体转层渲染：
    * 1) 静止姿态生成每个贴纸四角
    * 2) 属于转层的贴纸：四个角点 + 法线 一起绕魔方中心旋转
-   * 3) teaching 模式：只给锁定的关键块上色
+   * 3) teaching 模式：只给锁定的关键块上色；背向相机的关键贴纸用「透视」画出
+   *    （背面关键色也必须可见，才能判断情形）
    */
   function renderCube(faces, opts) {
     opts = opts || {};
@@ -1101,9 +1102,14 @@
     const moveLabel = opts.move || '';
     const teaching = !!opts.teaching;
     const focusIds = opts.focusIds || null;
+    // 透视：默认教学开启；可 opts.xray:false 关闭
+    const xray = teaching && opts.xray !== false;
 
     let cubies = cubiesFromFaces(faces);
-    if (teaching) cubies = maskCubiesTeaching(cubies, focusIds);
+    const focus = teaching
+      ? (focusIds || pickFocusCubieIds(cubies, opts.maxFocus != null ? opts.maxFocus : 3))
+      : null;
+    if (teaching) cubies = maskCubiesTeaching(cubies, focus);
 
     let angle = 0, axis = null, layerAxis = null, layerValues = null, layerAll = false;
     if (motion) {
@@ -1133,6 +1139,10 @@
     const quads = [];
     cubies.forEach(c => {
       const moving = !!(axis && (layerAll || (layerValues && layerValues.has(c.pos[layerAxis]))));
+      const keys = Object.keys(c.stickers);
+      const isCenter = keys.length === 1;
+      // mask 后：非关键角/棱全黑；中心保留色；关键块有真实色
+      const isFocusCubie = !teaching || isCenter || keys.some(dk => c.stickers[dk] !== TEACH_BLACK);
 
       Object.keys(c.stickers).forEach(dk => {
         // 先在静止姿态生成贴纸几何，再整体旋转（刚体）
@@ -1146,7 +1156,23 @@
 
         const len = Math.hypot(n[0], n[1], n[2]) || 1;
         n = [n[0] / len, n[1] / len, n[2] / len];
-        if (facingCamera(n) < 0.02) return;
+        const faceCam = facingCamera(n);
+        const color = c.stickers[dk];
+        const isBlack = color === TEACH_BLACK || color === '#0b0d12';
+        const isFocusSticker = isFocusCubie && !isBlack;
+
+        // 普通：背向贴纸不画；教学透视：关键色贴纸背向也画
+        let kind = 'front';
+        if (faceCam < 0.02) {
+          if (!(xray && isFocusSticker)) return;
+          kind = 'xray';
+        } else if (isBlack && xray) {
+          kind = 'dim'; // 半透明黑壳，让背面关键色透出来
+        } else if (isFocusSticker) {
+          kind = 'focus';
+        } else {
+          kind = isBlack ? 'dim' : 'front';
+        }
 
         const proj = corners.map(p => project(p, ox, oy, scale));
         const ctr = [
@@ -1154,16 +1180,26 @@
           (corners[0][1] + corners[1][1] + corners[2][1] + corners[3][1]) / 4,
           (corners[0][2] + corners[1][2] + corners[2][2] + corners[3][2]) / 4
         ];
+        // 透视贴纸略往深处推一点，先画再被正面盖住时仍可见（半透明壳）
+        let depth = depthKey(ctr);
+        if (kind === 'xray') depth -= 0.35;
+        if (kind === 'dim') depth -= 0.05;
         quads.push({
           points: proj,
-          color: c.stickers[dk],
+          color: color,
           normal: n,
-          depth: depthKey(ctr)
+          depth: depth,
+          kind: kind
         });
       });
     });
 
-    quads.sort((a, b) => a.depth - b.depth);
+    // 绘制顺序：背面透视 → 半透明壳 → 正面普通 → 正面关键
+    const kindOrder = { xray: 0, dim: 1, front: 2, focus: 3 };
+    quads.sort((a, b) => {
+      if (a.depth !== b.depth) return a.depth - b.depth;
+      return (kindOrder[a.kind] || 0) - (kindOrder[b.kind] || 0);
+    });
 
     let out = `<svg viewBox="0 0 ${width} ${height}" width="100%" height="100%" class="cube-demo-svg" xmlns="http://www.w3.org/2000/svg">`;
     out += `<ellipse cx="${ox}" cy="${height - 26}" rx="80" ry="16" fill="rgba(0,0,0,.22)"/>`;
@@ -1172,16 +1208,31 @@
     out += `<circle cx="${core.x}" cy="${core.y}" r="${scale * 0.22}" fill="#1a2030" stroke="rgba(255,255,255,.08)" stroke-width="1"/>`;
 
     quads.forEach(q => {
-      // 教学黑块：少一点高光，更“沉”下去
       const isBlack = q.color === TEACH_BLACK || q.color === '#0b0d12';
-      const fill = isBlack ? TEACH_BLACK : shadeByNormal(q.color, q.normal);
-      out += `<polygon class="cube-sticker-3d${isBlack ? ' dim' : ' focus'}" points="${pts(q.points)}" fill="${fill}"/>`;
-      if (!isBlack) {
+      let fill;
+      let cls = 'cube-sticker-3d';
+      if (q.kind === 'xray') {
+        // 背面关键色：略压暗 + 虚线描边，表示「在背面」
+        fill = shadeByNormal(q.color, q.normal);
+        cls += ' focus xray';
+      } else if (q.kind === 'dim' || isBlack) {
+        fill = TEACH_BLACK;
+        cls += ' dim';
+        if (xray) cls += ' shell';
+      } else if (q.kind === 'focus') {
+        fill = shadeByNormal(q.color, q.normal);
+        cls += ' focus';
+      } else {
+        fill = shadeByNormal(q.color, q.normal);
+      }
+      out += `<polygon class="${cls}" points="${pts(q.points)}" fill="${fill}"/>`;
+      if (q.kind === 'focus' || q.kind === 'xray') {
         const p = q.points;
         const g0 = { x: p[0].x * 0.7 + p[1].x * 0.15 + p[3].x * 0.15, y: p[0].y * 0.7 + p[1].y * 0.15 + p[3].y * 0.15 };
         const g1 = { x: p[0].x * 0.15 + p[1].x * 0.7 + p[2].x * 0.15, y: p[0].y * 0.15 + p[1].y * 0.7 + p[2].y * 0.15 };
         const g2 = { x: (p[0].x + p[1].x + p[2].x + p[3].x) / 4, y: (p[0].y + p[1].y + p[2].y + p[3].y) / 4 };
-        out += `<polygon class="cube-sticker-gloss" points="${g0.x.toFixed(1)},${g0.y.toFixed(1)} ${g1.x.toFixed(1)},${g1.y.toFixed(1)} ${g2.x.toFixed(1)},${g2.y.toFixed(1)}" fill="rgba(255,255,255,.14)"/>`;
+        const gloss = q.kind === 'xray' ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,.14)';
+        out += `<polygon class="cube-sticker-gloss" points="${g0.x.toFixed(1)},${g0.y.toFixed(1)} ${g1.x.toFixed(1)},${g1.y.toFixed(1)} ${g2.x.toFixed(1)},${g2.y.toFixed(1)}" fill="${gloss}"/>`;
       }
     });
 

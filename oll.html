@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>③ OLL 顶面朝向 · CFOP 教程</title>
-<link rel="stylesheet" href="assets/style.css?v=20260716c">
+<link rel="stylesheet" href="assets/style.css?v=20260717a">
 </head>
 <body>
 <nav class="nav">
@@ -27,8 +27,8 @@
 
   <div class="callout">
     <strong>看图方法：</strong> 每张卡顶部是<strong>3D 示意图</strong>（与演示就绪态一致）。
-    彩色=所有带<strong>黄色</strong>的顶层角/棱，中心色=方位参考，黑色=其它块。
-    对照你魔方顶面黄块形状找公式即可。
+    彩色=所有带<strong>黄色</strong>的顶层角/棱（背面黄块以虚线透视标出），中心色=方位参考，半透明黑=其它块。
+    右侧另有<strong>俯视识别图</strong>（含四周侧色，背面也能看清）。对照顶面黄块形状找公式即可。
     每个公式卡都有 <strong>▶ 演示</strong>：点开即可播放真实转层动画。
   </div>
 
@@ -50,9 +50,9 @@
 </div>
 
 <div class="footer">魔方 CFOP 完全教程 · OLL（57 公式）</div>
-<script src="assets/cube.js?v=20260716a"></script>
-<script src="assets/cube-anim.js?v=20260716a"></script>
-<script src="assets/ui.js?v=20260716a"></script>
+<script src="assets/cube.js?v=20260717a"></script>
+<script src="assets/cube-anim.js?v=20260717a"></script>
+<script src="assets/ui.js?v=20260717a"></script>
 <script src="data/oll.js"></script>
 <script>
 (function () {
@@ -74,14 +74,18 @@
       const demoOpts = {
         oll: true,
         ocll: a.group === 'A',
-        intro: `彩色=所有带黄色的顶层角/棱（目标：顶面全黄），中心色=方位参考，黑色=其它块。公式：${a.moves}`
+        intro: `彩色=所有带黄色的顶层角/棱（目标：顶面全黄；背面黄块虚线透视），中心色=方位参考，半透明黑=其它块。公式：${a.moves}`
       };
       const snap = CubeAnim.renderTeachingSnap(Object.assign({ moves: a.moves }, demoOpts));
+      const flat = CubeViz.renderOLL({ pattern: a.pattern, sides: a.sides, top: a.top });
       const c = document.createElement('div');
       c.className = 'algo-card';
       c.setAttribute('data-search', `oll ${a.id} ${a.name} ${a.groupName}`);
       c.innerHTML =
-        `<div class="card-cube-snap">${snap}</div>` +
+        `<div class="card-snap-row">` +
+          `<div class="card-cube-snap">${snap}</div>` +
+          `<div class="card-flat-snap">${flat}<span class="card-flat-label">俯视识别</span></div>` +
+        `</div>` +
         `<div class="name">OLL ${a.id}</div>` +
         `<div class="tag">${a.name}</div>` +
         `<div class="moves">${CubeViz.fmtMoves(a.moves)}</div>`;

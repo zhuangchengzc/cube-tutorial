@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>② F2L 前两层 · CFOP 教程</title>
-<link rel="stylesheet" href="assets/style.css?v=20260716c">
+<link rel="stylesheet" href="assets/style.css?v=20260717a">
 </head>
 <body>
 <nav class="nav">
@@ -66,9 +66,9 @@
 </div>
 
 <div class="footer">魔方 CFOP 完全教程 · F2L（41 标准公式）</div>
-<script src="assets/cube.js?v=20260716a"></script>
-<script src="assets/cube-anim.js?v=20260716a"></script>
-<script src="assets/ui.js?v=20260716a"></script>
+<script src="assets/cube.js?v=20260717a"></script>
+<script src="assets/cube-anim.js?v=20260717a"></script>
+<script src="assets/ui.js?v=20260717a"></script>
 <script src="data/f2l.js"></script>
 <script>
 (function () {
@@ -88,7 +88,7 @@
     list.forEach(a => {
       const demoOpts = {
         f2l: true,
-        intro: `彩色=本公式的角块+棱块（优先前右 FR 对），中心色=方位参考，黑色=其它块。公式：${a.moves}`
+        intro: `彩色=本公式的角块+棱块（优先前右 FR 对；背面关键色以虚线透视标出），中心色=方位参考，半透明黑=其它块。公式：${a.moves}`
       };
       const snap = CubeAnim.renderTeachingSnap(Object.assign({ moves: a.moves }, demoOpts));
       const c = document.createElement('div');
