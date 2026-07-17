@@ -114,17 +114,17 @@
         if (!focusIds && isLBLMid && CubeAnim.pickLBLMidFocusIds && startCubies) {
           focusIds = Array.from(CubeAnim.pickLBLMidFocusIds(startCubies));
         }
-        let defaultIntro = `彩色=关键块（背面虚线透视），半透明黑=其它块；颜色全程锁定。公式：${movesText}`;
+        let defaultIntro = `彩色=关键块（背面关键色虚线标出），黑色=其它块；颜色全程锁定。公式：${movesText}`;
         if (isPLL) {
-          defaultIntro = `彩色=顶层全部角块+棱块（目标：顶层排列归位；背面关键色虚线透视），中心色=方位参考，半透明黑=其它块。公式：${movesText}`;
+          defaultIntro = `彩色=顶层全部角块+棱块（目标：顶层排列归位；背面关键色虚线标出），中心色=方位参考，黑色=其它块。公式：${movesText}`;
         } else if (isOLL) {
-          defaultIntro = `彩色=所有带黄色的顶层角/棱（目标：顶面全黄；背面黄块虚线透视），中心色=方位参考，半透明黑=其它块。公式：${movesText}`;
+          defaultIntro = `彩色=所有带黄色的顶层角/棱（目标：顶面全黄；背面黄块虚线标出），中心色=方位参考，黑色=其它块。公式：${movesText}`;
         } else if (isCross) {
-          defaultIntro = `彩色=四条白棱（目标：底面白十字 + 侧色对齐；背面也透视标出），中心色=方位参考，半透明黑=其它块。公式：${movesText}`;
+          defaultIntro = `彩色=四条白棱（目标：底面白十字 + 侧色对齐；背面关键色虚线标出），中心色=方位参考，黑色=其它块。公式：${movesText}`;
         } else if (isF2L) {
-          defaultIntro = `彩色=本公式的角块+棱块（背面虚线透视），中心色=方位参考，半透明黑=其它块。公式：${movesText}`;
+          defaultIntro = `彩色=本公式的角块+棱块（背面关键色虚线标出），中心色=方位参考，黑色=其它块。公式：${movesText}`;
         } else if (isLBLMid) {
-          defaultIntro = `彩色=各中心 + 底白棱 + 目标槽底角 + 当前要插/取的中层棱（背面虚线透视），半透明黑=其它块。公式：${movesText}`;
+          defaultIntro = `彩色=各中心 + 底白棱 + 目标槽底角 + 当前要插/取的中层棱（背面关键色虚线标出），黑色=其它块。公式：${movesText}`;
         }
         const faceFront = (typeof options.faceFront === 'boolean')
           ? options.faceFront

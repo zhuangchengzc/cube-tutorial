@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>④ PLL 顶层排列 · CFOP 教程</title>
-<link rel="stylesheet" href="assets/style.css?v=20260717a">
+<link rel="stylesheet" href="assets/style.css?v=20260717b">
 </head>
 <body>
 <nav class="nav">
@@ -27,7 +27,7 @@
 
   <div class="callout">
     <strong>看图方法：</strong> 每张卡顶部是<strong>3D 示意图</strong>（与演示就绪态一致）。
-    彩色=顶层全部<strong>角块 + 棱块</strong>（顶面已全黄；背面色带虚线透视），中心色=方位参考，半透明黑=其它块。
+    彩色=顶层全部<strong>角块 + 棱块</strong>（顶面已全黄；背面关键色虚线标出），中心色=方位参考，黑色=其它块。
     右侧另有<strong>俯视识别图</strong>（四周完整色带）。对照侧面色带找公式即可。
     每个公式卡都有 <strong>▶ 演示</strong>：点开即可播放真实转层动画。
   </div>
@@ -53,8 +53,8 @@
 
 <div class="footer">魔方 CFOP 完全教程 · PLL（21 公式）</div>
 <script src="assets/cube.js?v=20260717a"></script>
-<script src="assets/cube-anim.js?v=20260717a"></script>
-<script src="assets/ui.js?v=20260717a"></script>
+<script src="assets/cube-anim.js?v=20260717b"></script>
+<script src="assets/ui.js?v=20260717b"></script>
 <script src="data/pll.js"></script>
 <script>
 (function () {
@@ -75,7 +75,7 @@
     list.forEach(a => {
       const demoOpts = {
         pll: true,
-        intro: `彩色=顶层全部角块+棱块（目标：顶层排列归位；背面关键色虚线透视），中心色=方位参考，半透明黑=其它块。公式：${a.moves}`
+        intro: `彩色=顶层全部角块+棱块（目标：顶层排列归位；背面关键色虚线标出），中心色=方位参考，黑色=其它块。公式：${a.moves}`
       };
       const snap = CubeAnim.renderTeachingSnap(Object.assign({ moves: a.moves }, demoOpts));
       const flat = CubeViz.renderPLL(a.sides);

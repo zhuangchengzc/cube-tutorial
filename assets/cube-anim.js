@@ -1088,8 +1088,7 @@
    * 刚体转层渲染：
    * 1) 静止姿态生成每个贴纸四角
    * 2) 属于转层的贴纸：四个角点 + 法线 一起绕魔方中心旋转
-   * 3) teaching 模式：只给锁定的关键块上色；背向相机的关键贴纸用「透视」画出
-   *    （背面关键色也必须可见，才能判断情形）
+   * 3) teaching：关键角/棱上色；其背向贴纸虚线画出；中心与黑块不透视
    */
   function renderCube(faces, opts) {
     opts = opts || {};
@@ -1102,7 +1101,7 @@
     const moveLabel = opts.move || '';
     const teaching = !!opts.teaching;
     const focusIds = opts.focusIds || null;
-    // 透视：默认教学开启；可 opts.xray:false 关闭
+    // 仅关键角/棱背向贴纸透视；可 opts.xray:false 关闭
     const xray = teaching && opts.xray !== false;
 
     let cubies = cubiesFromFaces(faces);
@@ -1141,8 +1140,11 @@
       const moving = !!(axis && (layerAll || (layerValues && layerValues.has(c.pos[layerAxis]))));
       const keys = Object.keys(c.stickers);
       const isCenter = keys.length === 1;
-      // mask 后：非关键角/棱全黑；中心保留色；关键块有真实色
-      const isFocusCubie = !teaching || isCenter || keys.some(dk => c.stickers[dk] !== TEACH_BLACK);
+      // 关键角/棱：mask 后仍有真实色，且不是中心（中心不参与透视）
+      const isFocusPiece = !isCenter && keys.some(dk => {
+        const col = c.stickers[dk];
+        return col !== TEACH_BLACK && col !== '#0b0d12';
+      });
 
       Object.keys(c.stickers).forEach(dk => {
         // 先在静止姿态生成贴纸几何，再整体旋转（刚体）
@@ -1159,19 +1161,19 @@
         const faceCam = facingCamera(n);
         const color = c.stickers[dk];
         const isBlack = color === TEACH_BLACK || color === '#0b0d12';
-        const isFocusSticker = isFocusCubie && !isBlack;
+        // 仅关键角/棱的真实色贴纸可背面透视；中心/黑块绝不透视
+        const canXray = xray && isFocusPiece && !isBlack;
 
-        // 普通：背向贴纸不画；教学透视：关键色贴纸背向也画
-        let kind = 'front';
+        let kind;
         if (faceCam < 0.02) {
-          if (!(xray && isFocusSticker)) return;
+          if (!canXray) return; // 背面：中心、黑块、非关键色一律不画
           kind = 'xray';
-        } else if (isBlack && xray) {
-          kind = 'dim'; // 半透明黑壳，让背面关键色透出来
-        } else if (isFocusSticker) {
+        } else if (isBlack) {
+          kind = 'dim'; // 正面黑块保持不透明
+        } else if (isFocusPiece) {
           kind = 'focus';
         } else {
-          kind = isBlack ? 'dim' : 'front';
+          kind = 'front'; // 中心等正面色
         }
 
         const proj = corners.map(p => project(p, ox, oy, scale));
@@ -1180,10 +1182,8 @@
           (corners[0][1] + corners[1][1] + corners[2][1] + corners[3][1]) / 4,
           (corners[0][2] + corners[1][2] + corners[2][2] + corners[3][2]) / 4
         ];
-        // 透视贴纸略往深处推一点，先画再被正面盖住时仍可见（半透明壳）
         let depth = depthKey(ctr);
-        if (kind === 'xray') depth -= 0.35;
-        if (kind === 'dim') depth -= 0.05;
+        if (kind === 'xray') depth -= 0.4;
         quads.push({
           points: proj,
           color: color,
@@ -1194,7 +1194,7 @@
       });
     });
 
-    // 绘制顺序：背面透视 → 半透明壳 → 正面普通 → 正面关键
+    // 绘制顺序：背面关键色 → 黑块 → 正面普通 → 正面关键
     const kindOrder = { xray: 0, dim: 1, front: 2, focus: 3 };
     quads.sort((a, b) => {
       if (a.depth !== b.depth) return a.depth - b.depth;
@@ -1218,7 +1218,6 @@
       } else if (q.kind === 'dim' || isBlack) {
         fill = TEACH_BLACK;
         cls += ' dim';
-        if (xray) cls += ' shell';
       } else if (q.kind === 'focus') {
         fill = shadeByNormal(q.color, q.normal);
         cls += ' focus';
