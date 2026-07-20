@@ -503,7 +503,10 @@ p.lead { color: var(--text-dim); }
   cursor: pointer;
   transition: .15s;
 }
-.demo-btn:hover { border-color: var(--accent-2); }
+.demo-btn:hover:not(:disabled) { border-color: var(--accent-2); }
+.demo-btn:disabled { opacity: .4; cursor: not-allowed; }
+.demo-btn.next { background: rgba(79,195,247,.14); border-color: rgba(79,195,247,.45); }
+.demo-btn.play { color: var(--accent); }
 .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 16px; margin: 18px 0 8px; }
 .demo-card {
   background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--bg-card);

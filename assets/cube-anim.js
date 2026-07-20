@@ -1339,17 +1339,24 @@
         <div class="demo-meta">
           <div class="demo-caption"></div>
           <div class="demo-controls">
-            <button type="button" class="demo-btn play">播放演示</button>
-            <button type="button" class="demo-btn replay">重播</button>
+            <button type="button" class="demo-btn prev" title="上一步">‹ 上一步</button>
+            <button type="button" class="demo-btn next" title="下一步">下一步 ›</button>
+            <button type="button" class="demo-btn play" title="自动连播">自动播放</button>
+            <button type="button" class="demo-btn reset" title="回到就绪">重置</button>
           </div>
         </div>
       </div>`;
     const stage = container.querySelector('.demo-stage');
     const caption = container.querySelector('.demo-caption');
+    const prevBtn = container.querySelector('.demo-btn.prev');
+    const nextBtn = container.querySelector('.demo-btn.next');
     const playBtn = container.querySelector('.demo-btn.play');
-    const replayBtn = container.querySelector('.demo-btn.replay');
+    const resetBtn = container.querySelector('.demo-btn.reset');
 
-    let raf = 0, timer = 0, playing = false, stopped = false;
+    // stepIndex: -1 = ready; 0..frames.length-1 = after that step
+    let stepIndex = -1;
+    let raf = 0, timer = 0, playing = false, stopped = false, animating = false;
+    const total = frames.length;
 
     function paint(faces, extras) {
       extras = extras || {};
@@ -1361,37 +1368,64 @@
       });
     }
 
+    function facesAt(idx) {
+      if (idx < 0) return startFaces;
+      return frames[idx].faces;
+    }
+
+    function updateButtons() {
+      prevBtn.disabled = animating || stepIndex < 0;
+      nextBtn.disabled = animating || stepIndex >= total - 1 || total === 0;
+      playBtn.disabled = animating || total === 0;
+      resetBtn.disabled = animating;
+      if (!playing) playBtn.textContent = '自动播放';
+    }
+
     function showStart() {
+      stepIndex = -1;
       paint(startFaces, { move: '就绪' });
       const n = focusIds ? focusIds.size : 0;
-      const base = config.intro || `高亮 ${n} 个未归位关键块（其余黑色）。点击播放`;
-      const tip = orientNote ? `${base} ${orientNote}` : base;
-      caption.innerHTML = `<span class="demo-step">准备</span> ${escapeHtml(tip)}`;
+      const base = config.intro || ('高亮 ' + n + ' 个关键块（其余黑色）。用「下一步」逐步演示');
+      const tip = orientNote ? (base + ' ' + orientNote) : base;
+      const prog = total ? ('0/' + total) : '0/0';
+      caption.innerHTML = '<span class="demo-step">准备 ' + prog + '</span> ' + escapeHtml(tip);
+      updateButtons();
+    }
+
+    function showStepStatic(idx) {
+      stepIndex = idx;
+      if (idx < 0) {
+        showStart();
+        return;
+      }
+      const step = frames[idx];
+      paint(step.faces, { move: step.move || '' });
+      const label = '步骤 ' + (idx + 1) + '/' + total;
+      caption.innerHTML = '<span class="demo-step">' + label + '</span> ' + escapeHtml(step.text || ('执行 ' + (step.move || '')));
+      updateButtons();
     }
 
     function stopAll() {
       cancelAnimationFrame(raf);
       clearTimeout(timer);
-      raf = 0; timer = 0; playing = false;
-      playBtn.textContent = '播放演示';
+      raf = 0;
+      timer = 0;
+      playing = false;
+      animating = false;
+      playBtn.textContent = '自动播放';
+      updateButtons();
     }
 
     function animateMove(beforeFaces, turn, afterFaces, meta, done) {
-      // silent / 无转层：瞬时切状态（用于吸收 x/y/z 整块旋转）
       if (!turn || meta.silent) {
         paint(afterFaces, { move: meta.silent ? '' : (meta.move || '') });
-        if (meta.silent) {
-          // 整块旋转不占讲解时间，几乎无停顿
-          timer = setTimeout(done, 16);
-        } else {
-          caption.innerHTML = `<span class="demo-step">${meta.label}</span> ${escapeHtml(meta.text)}`;
-          timer = setTimeout(done, settleDelay);
-        }
+        caption.innerHTML = '<span class="demo-step">' + meta.label + '</span> ' + escapeHtml(meta.text);
+        timer = setTimeout(done, meta.silent ? 16 : settleDelay);
         return;
       }
       const dur = meta.reorient ? Math.max(turnDuration * 1.5, 800) : turnDuration;
       const t0 = performance.now();
-      caption.innerHTML = `<span class="demo-step">${meta.label}</span> ${escapeHtml(meta.text)}`;
+      caption.innerHTML = '<span class="demo-step">' + meta.label + '</span> ' + escapeHtml(meta.text);
       function frame(now) {
         if (stopped) return;
         const p = Math.min(1, (now - t0) / dur);
@@ -1408,59 +1442,89 @@
       raf = requestAnimationFrame(frame);
     }
 
+    function goNext(fromAuto) {
+      if (animating || total === 0) return;
+      if (stepIndex >= total - 1) {
+        if (fromAuto) {
+          playing = false;
+          playBtn.textContent = '自动播放';
+          updateButtons();
+        }
+        return;
+      }
+      const nextIdx = stepIndex + 1;
+      const step = frames[nextIdx];
+      const before = facesAt(stepIndex);
+      const label = '步骤 ' + (nextIdx + 1) + '/' + total;
+      animating = true;
+      updateButtons();
+      stopped = false;
+      animateMove(before, step.turn, step.faces, {
+        move: step.move,
+        text: step.text || ('执行 ' + (step.move || '')),
+        label: label,
+        silent: !!step.silent
+      }, function () {
+        stepIndex = nextIdx;
+        animating = false;
+        if (playing && !stopped) {
+          timer = setTimeout(function () {
+            if (playing && !stopped) goNext(true);
+          }, Math.max(settleDelay, 320));
+        } else {
+          playing = false;
+          playBtn.textContent = '自动播放';
+          updateButtons();
+        }
+      });
+    }
+
+    function goPrev() {
+      if (animating || stepIndex < 0) return;
+      stopAll();
+      stopped = true;
+      showStepStatic(stepIndex - 1);
+    }
+
     function playSequence() {
-      if (!frames.length) return;
+      if (!total) return;
       stopAll();
       stopped = false;
       playing = true;
       playBtn.textContent = '停止';
-      let i = 0;
-      let currentFaces = cloneFaces(startFaces);
-      const layerTotal = frames.filter(f => f.move).length;
-      let layerIndex = 0;
-
-      const next = () => {
-        if (stopped) return;
-        if (i >= frames.length) {
-          playing = false;
-          playBtn.textContent = '播放演示';
-          return;
-        }
-        const step = frames[i];
-        const before = cloneFaces(currentFaces);
-        let label = '';
-        layerIndex += 1;
-        label = `步骤 ${layerIndex}/${layerTotal || frames.length}`;
-        animateMove(before, step.turn, step.faces, {
-          move: step.move,
-          text: step.text,
-          label: label,
-          silent: !!step.silent
-        }, () => {
-          currentFaces = step.faces;
-          i += 1;
-          next();
-        });
-      };
-      paint(startFaces, { move: '开始' });
-      timer = setTimeout(next, 200);
+      if (stepIndex >= total - 1) {
+        stepIndex = -1;
+        paint(startFaces, { move: '开始' });
+      }
+      updateButtons();
+      timer = setTimeout(function () { goNext(true); }, 180);
     }
 
-    playBtn.addEventListener('click', () => {
+    prevBtn.addEventListener('click', function () {
+      if (playing) { stopped = true; stopAll(); }
+      goPrev();
+    });
+    nextBtn.addEventListener('click', function () {
+      if (playing) { stopped = true; stopAll(); }
+      goNext(false);
+    });
+    playBtn.addEventListener('click', function () {
       if (playing) {
         stopped = true;
         stopAll();
-        showStart();
+        if (stepIndex < 0) showStart();
+        else showStepStatic(stepIndex);
         return;
       }
       playSequence();
     });
-    replayBtn.addEventListener('click', () => {
+    resetBtn.addEventListener('click', function () {
       stopped = true;
       stopAll();
-      playSequence();
+      showStart();
     });
 
+    showStart();
     showStart();
   }
 
