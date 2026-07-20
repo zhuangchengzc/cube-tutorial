@@ -446,9 +446,9 @@ p.lead { color: var(--text-dim); }
 .card-demo-host .cube-demo-svg {
   max-width: 220px;
 }
-.card-demo-host .demo-caption {
-  font-size: .82rem;
-}
+.card-demo-host .demo-intro { font-size: .8rem; min-height: 2.7em; max-height: 2.7em; }
+.card-demo-host .demo-caption { font-size: .84rem; }
+.card-demo-host .demo-controls { min-height: 38px; }
 .card-demo-host .demo-btn {
   padding: 6px 10px;
   font-size: .8rem;
@@ -488,10 +488,41 @@ p.lead { color: var(--text-dim); }
   overflow: hidden;
 }
 .demo-stage.flash { animation: demoPulse .22s ease; }
-.demo-meta { display: flex; gap: 12px; justify-content: space-between; align-items: center; margin-top: 12px; flex-wrap: wrap; }
-.demo-caption { color: var(--text-dim); font-size: .92rem; }
-.demo-step { color: var(--accent); font-weight: 700; margin-right: 8px; }
-.demo-controls { display: flex; gap: 8px; flex-wrap: wrap; }
+.demo-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 12px;
+}
+.demo-intro {
+  color: var(--text-dim);
+  font-size: .86rem;
+  line-height: 1.45;
+  min-height: 2.9em; /* 固定约 2 行，简介不随步进变化 */
+  max-height: 2.9em;
+  overflow: hidden;
+}
+.demo-caption {
+  color: var(--text-dim);
+  font-size: .9rem;
+  line-height: 1.4;
+  min-height: 1.4em; /* 固定 1 行步骤文字 */
+  max-height: 1.4em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.demo-step { color: var(--accent); font-weight: 700; margin-right: 0; }
+.demo-caption-text { color: var(--text-dim); }
+.demo-controls {
+  display: flex;
+  gap: 8px;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  min-height: 40px;
+  align-items: center;
+}
 .demo-btn {
   background: var(--bg-soft);
   color: var(--text);
@@ -506,7 +537,10 @@ p.lead { color: var(--text-dim); }
 .demo-btn:hover:not(:disabled) { border-color: var(--accent-2); }
 .demo-btn:disabled { opacity: .4; cursor: not-allowed; }
 .demo-btn.next { background: rgba(79,195,247,.14); border-color: rgba(79,195,247,.45); }
-.demo-btn.play { color: var(--accent); }
+.demo-btn.prev,
+.demo-btn.next { min-width: 5.6em; }
+.demo-btn.play { color: var(--accent); min-width: 5.6em; }
+.demo-btn.reset { min-width: 3.6em; }
 .demo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap: 16px; margin: 18px 0 8px; }
 .demo-card {
   background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--bg-card);

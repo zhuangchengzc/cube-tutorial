@@ -1333,11 +1333,18 @@
       ? '关键块已转到正面并固定朝向，下面只演示层转。'
       : '朝向已固定，下面只演示层转。';
 
+    // 简介只写一次，步骤行固定短文案，避免高度变化导致按钮跳动
+    const nFocus = focusIds ? focusIds.size : 0;
+    const introText = config.intro
+      || ('高亮 ' + nFocus + ' 个关键块（其余黑色）。用「下一步」逐步演示');
+    const introLine = orientNote ? (introText + ' ' + orientNote) : introText;
+
     container.innerHTML = `
       <div class="demo-player">
         <div class="demo-stage"></div>
         <div class="demo-meta">
-          <div class="demo-caption"></div>
+          <div class="demo-intro"></div>
+          <div class="demo-caption"><span class="demo-step"></span><span class="demo-caption-text"></span></div>
           <div class="demo-controls">
             <button type="button" class="demo-btn prev" title="上一步">‹ 上一步</button>
             <button type="button" class="demo-btn next" title="下一步">下一步 ›</button>
@@ -1347,11 +1354,14 @@
         </div>
       </div>`;
     const stage = container.querySelector('.demo-stage');
-    const caption = container.querySelector('.demo-caption');
+    const introEl = container.querySelector('.demo-intro');
+    const stepEl = container.querySelector('.demo-step');
+    const captionTextEl = container.querySelector('.demo-caption-text');
     const prevBtn = container.querySelector('.demo-btn.prev');
     const nextBtn = container.querySelector('.demo-btn.next');
     const playBtn = container.querySelector('.demo-btn.play');
     const resetBtn = container.querySelector('.demo-btn.reset');
+    introEl.textContent = introLine;
 
     // stepIndex: -1 = ready; 0..frames.length-1 = after that step
     let stepIndex = -1;
@@ -1381,14 +1391,16 @@
       if (!playing) playBtn.textContent = '自动播放';
     }
 
+    function setStepCaption(label, detail) {
+      stepEl.textContent = label || '';
+      captionTextEl.textContent = detail ? (' - ' + detail) : '';
+    }
+
     function showStart() {
       stepIndex = -1;
       paint(startFaces, { move: '就绪' });
-      const n = focusIds ? focusIds.size : 0;
-      const base = config.intro || ('高亮 ' + n + ' 个关键块（其余黑色）。用「下一步」逐步演示');
-      const tip = orientNote ? (base + ' ' + orientNote) : base;
       const prog = total ? ('0/' + total) : '0/0';
-      caption.innerHTML = '<span class="demo-step">准备 ' + prog + '</span> ' + escapeHtml(tip);
+      setStepCaption('准备 ' + prog, '点击下一步开始');
       updateButtons();
     }
 
@@ -1401,7 +1413,7 @@
       const step = frames[idx];
       paint(step.faces, { move: step.move || '' });
       const label = '步骤 ' + (idx + 1) + '/' + total;
-      caption.innerHTML = '<span class="demo-step">' + label + '</span> ' + escapeHtml(step.text || ('执行 ' + (step.move || '')));
+      setStepCaption(label, step.move || '');
       updateButtons();
     }
 
@@ -1419,13 +1431,13 @@
     function animateMove(beforeFaces, turn, afterFaces, meta, done) {
       if (!turn || meta.silent) {
         paint(afterFaces, { move: meta.silent ? '' : (meta.move || '') });
-        caption.innerHTML = '<span class="demo-step">' + meta.label + '</span> ' + escapeHtml(meta.text);
+        setStepCaption(meta.label, meta.move || '');
         timer = setTimeout(done, meta.silent ? 16 : settleDelay);
         return;
       }
       const dur = meta.reorient ? Math.max(turnDuration * 1.5, 800) : turnDuration;
       const t0 = performance.now();
-      caption.innerHTML = '<span class="demo-step">' + meta.label + '</span> ' + escapeHtml(meta.text);
+      setStepCaption(meta.label, meta.move || '');
       function frame(now) {
         if (stopped) return;
         const p = Math.min(1, (now - t0) / dur);
